@@ -1,0 +1,431 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-28T00:00:00+01:00",
+  "manufacturers": [
+    {
+      "id": "hp",
+      "name": "HP",
+      "match": "\\bHP\\b|Hewlett[- ]?Packard|LaserJet|OfficeJet|PageWide|DesignJet|DeskJet",
+      "officialDomains": [
+        "hp.com"
+      ],
+      "signerNames": [
+        "HP Inc.",
+        "Hewlett-Packard Company",
+        "HP Development Company"
+      ],
+      "macSignerNames": [
+        "HP Inc."
+      ],
+      "packages": []
+    },
+    {
+      "id": "canon",
+      "name": "Canon",
+      "match": "Canon|imageRUNNER|i-SENSYS|imageCLASS|imagePRESS|PIXMA|MAXIFY|\\bLBP\\d",
+      "officialDomains": [
+        "canon-europe.com",
+        "canon.it",
+        "canon.com",
+        "canon.co.jp",
+        "c-wss.com"
+      ],
+      "signerNames": [
+        "Canon Inc."
+      ],
+      "macSignerNames": [
+        "Canon Inc."
+      ],
+      "packages": []
+    },
+    {
+      "id": "kyocera",
+      "name": "Kyocera",
+      "match": "KYOCERA|ECOSYS|TASKalfa|\\bFS-\\d",
+      "officialDomains": [
+        "kyoceradocumentsolutions.eu",
+        "kyoceradocumentsolutions.com",
+        "kyoceradocumentsolutions.it",
+        "kyostatics.net"
+      ],
+      "signerNames": [
+        "KYOCERA Document Solutions Inc."
+      ],
+      "macSignerNames": [
+        "KYOCERA Document Solutions Inc."
+      ],
+      "packages": [
+        {
+          "id": "kyocera-kx-win-x64",
+          "driverFamily": "KX Driver",
+          "version": "8.4.1716",
+          "os": "windows",
+          "osMin": "10.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "x64"
+          ],
+          "language": "pcl6",
+          "models": "*",
+          "url": "https://www.kyoceradocumentsolutions.eu/test/kx_8.4_x64.zip",
+          "sourcePage": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+          "sha256": null,
+          "fileType": "zip",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "ok",
+          "notes": "SOLO TEST - link fittizio"
+        },
+        {
+          "id": "kyocera-kx-win-old",
+          "driverFamily": "KX Driver",
+          "version": "8.2.0623",
+          "os": "windows",
+          "osMin": "10.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "x64"
+          ],
+          "language": "pcl6",
+          "models": "*",
+          "url": "https://www.kyoceradocumentsolutions.eu/test/kx_8.2_x64.zip",
+          "sourcePage": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+          "sha256": null,
+          "fileType": "zip",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "ok",
+          "notes": "SOLO TEST - link fittizio"
+        },
+        {
+          "id": "kyocera-m2540-win",
+          "driverFamily": "KX Driver M2540",
+          "version": "8.1.0",
+          "os": "windows",
+          "osMin": "6.1",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "x64",
+            "x86"
+          ],
+          "language": "pcl6",
+          "models": "M2540|M2640",
+          "url": "https://www.kyoceradocumentsolutions.eu/test/m2540.zip",
+          "sourcePage": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+          "sha256": null,
+          "fileType": "zip",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "ok",
+          "notes": "SOLO TEST - link fittizio"
+        },
+        {
+          "id": "kyocera-kx-win7",
+          "driverFamily": "KX Driver",
+          "version": "7.5",
+          "os": "windows",
+          "osMin": "6.1",
+          "osMax": "6.3",
+          "buildMin": null,
+          "arch": [
+            "x86",
+            "x64"
+          ],
+          "language": "pcl6",
+          "models": "*",
+          "url": "https://www.kyoceradocumentsolutions.eu/test/kx75.zip",
+          "sourcePage": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+          "sha256": null,
+          "fileType": "zip",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "ok",
+          "notes": "SOLO TEST - link fittizio"
+        },
+        {
+          "id": "kyocera-kx-xp",
+          "driverFamily": "KX Driver",
+          "version": "nessuno",
+          "os": "windows",
+          "osMin": "5.1",
+          "osMax": "5.2",
+          "buildMin": null,
+          "arch": [
+            "x64"
+          ],
+          "language": "pcl6",
+          "models": "*",
+          "url": null,
+          "sourcePage": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+          "sha256": null,
+          "fileType": "zip",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "nessun_driver",
+          "notes": "SOLO TEST - link fittizio"
+        },
+        {
+          "id": "kyocera-mac",
+          "driverFamily": "Kyocera OS X",
+          "version": "5.4",
+          "os": "macos",
+          "osMin": "12.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "intel",
+            "applesilicon"
+          ],
+          "language": "ps",
+          "models": "*",
+          "url": "https://www.kyoceradocumentsolutions.eu/test/kyo.pkg",
+          "sourcePage": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+          "sha256": null,
+          "fileType": "pkg",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "ok",
+          "notes": "SOLO TEST - link fittizio"
+        }
+      ]
+    },
+    {
+      "id": "ricoh",
+      "name": "Ricoh",
+      "match": "RICOH|Aficio|\\bNRG\\b|nashuatec|Savin|Lanier|\\bIM C?\\d{3,4}|\\bMP C?\\d{3,4}|\\bSP C?\\d{3}",
+      "officialDomains": [
+        "ricoh.com",
+        "ricoh-europe.com",
+        "ricoh.it"
+      ],
+      "signerNames": [
+        "RICOH COMPANY, LTD.",
+        "Ricoh Company, Ltd."
+      ],
+      "macSignerNames": [
+        "RICOH COMPANY, LTD."
+      ],
+      "packages": [
+        {
+          "id": "ricoh-pcl6-up",
+          "driverFamily": "PCL6 Driver for Universal Print",
+          "version": "4.46.0.0",
+          "os": "windows",
+          "osMin": "10.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "x64",
+            "x86"
+          ],
+          "language": "pcl6",
+          "models": "*",
+          "url": "https://support.ricoh.com/test/z12345L16.exe",
+          "sourcePage": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+          "sha256": null,
+          "fileType": "exe",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "ok",
+          "notes": "SOLO TEST - link fittizio"
+        },
+        {
+          "id": "ricoh-ps-up",
+          "driverFamily": "PS Driver for Universal Print",
+          "version": "4.46.0.0",
+          "os": "windows",
+          "osMin": "10.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "x64"
+          ],
+          "language": "ps",
+          "models": "*",
+          "url": "https://support.ricoh.com/test/ps.exe",
+          "sourcePage": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+          "sha256": null,
+          "fileType": "exe",
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-10-28",
+          "status": "ok",
+          "notes": "SOLO TEST - link fittizio"
+        }
+      ]
+    },
+    {
+      "id": "xerox",
+      "name": "Xerox",
+      "match": "Xerox|VersaLink|AltaLink|WorkCentre|Phaser|PrimeLink|ColorQube",
+      "officialDomains": [
+        "xerox.com"
+      ],
+      "signerNames": [
+        "Xerox Corporation"
+      ],
+      "macSignerNames": [
+        "Xerox Corporation"
+      ],
+      "packages": []
+    },
+    {
+      "id": "brother",
+      "name": "Brother",
+      "match": "Brother|\\bHL-|\\bMFC-|\\bDCP-",
+      "officialDomains": [
+        "brother.com",
+        "brother.it",
+        "brother.eu"
+      ],
+      "signerNames": [
+        "Brother Industries, Ltd."
+      ],
+      "macSignerNames": [
+        "Brother Industries, Ltd."
+      ],
+      "packages": []
+    },
+    {
+      "id": "epson",
+      "name": "Epson",
+      "match": "EPSON|WorkForce|EcoTank|\\bAM-C\\d",
+      "officialDomains": [
+        "epson.eu",
+        "epson.it",
+        "epson.com",
+        "epson.net",
+        "epson.biz"
+      ],
+      "signerNames": [
+        "SEIKO EPSON Corporation",
+        "Seiko Epson Corporation"
+      ],
+      "macSignerNames": [
+        "SEIKO EPSON Corporation"
+      ],
+      "packages": []
+    },
+    {
+      "id": "konicaminolta",
+      "name": "Konica Minolta",
+      "match": "KONICA|MINOLTA|bizhub|\\bineo\\b|\\bDevelop\\b|Olivetti d-Color",
+      "officialDomains": [
+        "konicaminolta.eu",
+        "konicaminolta.com",
+        "konicaminolta.it",
+        "konicaminolta.jp",
+        "develop.eu"
+      ],
+      "signerNames": [
+        "KONICA MINOLTA, INC.",
+        "Konica Minolta Business Solutions"
+      ],
+      "macSignerNames": [
+        "KONICA MINOLTA, INC."
+      ],
+      "packages": []
+    },
+    {
+      "id": "lexmark",
+      "name": "Lexmark",
+      "match": "Lexmark",
+      "officialDomains": [
+        "lexmark.com"
+      ],
+      "signerNames": [
+        "Lexmark International, Inc.",
+        "Lexmark International Inc."
+      ],
+      "macSignerNames": [
+        "Lexmark International, Inc."
+      ],
+      "packages": []
+    },
+    {
+      "id": "sharp",
+      "name": "Sharp",
+      "match": "SHARP|\\bMX-[A-Z0-9]|\\bBP-[0-9]|\\bAR-[0-9]",
+      "officialDomains": [
+        "sharp.eu",
+        "sharp.it",
+        "global.sharp",
+        "jp.sharp",
+        "sharp.co.jp",
+        "sharpusa.com"
+      ],
+      "signerNames": [
+        "SHARP CORPORATION",
+        "Sharp Corporation"
+      ],
+      "macSignerNames": [
+        "SHARP CORPORATION"
+      ],
+      "packages": []
+    },
+    {
+      "id": "toshiba",
+      "name": "Toshiba",
+      "match": "TOSHIBA|e-STUDIO",
+      "officialDomains": [
+        "toshibatec.eu",
+        "toshibatec.com",
+        "toshibatec.it",
+        "toshibatec.co.jp"
+      ],
+      "signerNames": [
+        "Toshiba Tec Corporation",
+        "TOSHIBA TEC CORPORATION"
+      ],
+      "macSignerNames": [
+        "Toshiba Tec Corporation"
+      ],
+      "packages": []
+    },
+    {
+      "id": "oki",
+      "name": "OKI",
+      "match": "\\bOKI\\b|OKIDATA|\\bB\\d{3,4}dn|\\bC\\d{3,4}dn|\\bMC\\d{3}|\\bMB\\d{3}|\\bES\\d{4}",
+      "officialDomains": [
+        "oki.com",
+        "oki.eu"
+      ],
+      "signerNames": [
+        "Oki Electric Industry Co., Ltd.",
+        "OKI Electric Industry Co., Ltd."
+      ],
+      "macSignerNames": [
+        "Oki Electric Industry Co., Ltd."
+      ],
+      "packages": []
+    },
+    {
+      "id": "samsung",
+      "name": "Samsung (driver HP)",
+      "match": "Samsung|\\bSL-[A-Z]|\\bML-\\d|\\bSCX-\\d|\\bCLX-\\d|\\bCLP-\\d|\\bM\\d{4}F?N?D?W?\\b",
+      "officialDomains": [
+        "hp.com"
+      ],
+      "signerNames": [
+        "HP Inc.",
+        "Samsung Electronics Co., Ltd.",
+        "Samsung Electronics CO., LTD."
+      ],
+      "macSignerNames": [
+        "HP Inc.",
+        "Samsung Electronics Co., Ltd."
+      ],
+      "packages": []
+    }
+  ]
+}

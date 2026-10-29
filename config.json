@@ -1,0 +1,15 @@
+{
+  "catalogSource": "https://raw.githubusercontent.com/UTENTE/PrinterKit/main/catalogo/drivers.json",
+  "recipesSource": "https://raw.githubusercontent.com/UTENTE/PrinterKit/main/scanner-ricette/",
+  "nasRecipesSource": "https://raw.githubusercontent.com/UTENTE/PrinterKit/main/nas-ricette/",
+  "githubRepo": "UTENTE/PrinterKit",
+  "snmpCommunity": "public",
+  "scanFolderDefault": "C:\\Scansioni",
+  "scanShareName": "Scansioni",
+  "scanUserDefault": "scanner",
+  "logCopyToKit": true,
+  "defaultRange": "",
+  "tcpTimeoutMs": 1000,
+  "snmpTimeoutMs": 1500,
+  "scanVerifySeconds": 120
+}

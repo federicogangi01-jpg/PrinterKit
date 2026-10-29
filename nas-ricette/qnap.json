@@ -1,0 +1,47 @@
+{
+  "id": "qnap-qts",
+  "brand": "qnap",
+  "validata": false,
+  "collaudo": null,
+  "note": "Interfaccia CGI di QTS (authLogin.cgi e privWizard.cgi). Endpoint da collaudare su un NAS reale prima di impostare 'validata' a true.",
+  "baseUrls": [
+    "https://{{ip}}:443",
+    "http://{{ip}}:8080"
+  ],
+  "login": [
+    {
+      "label": "accesso QTS",
+      "method": "POST",
+      "path": "/cgi-bin/authLogin.cgi",
+      "form": {
+        "user": "{{adminUser}}",
+        "plain_pwd": "{{adminPassword}}",
+        "remme": "0"
+      },
+      "extract": {
+        "sid": "<authSid><!\\[CDATA\\[([^\\]]+)\\]\\]></authSid>"
+      },
+      "expectRegex": "<authPassed><!\\[CDATA\\[1\\]\\]></authPassed>"
+    }
+  ],
+  "createShare": [
+    {
+      "label": "cartella condivisa {{share}}",
+      "method": "GET",
+      "writes": true,
+      "path": "/cgi-bin/priv/privWizard.cgi?wiz_func=share_create&action=add_share&vol_ID=1&share_name={{share}}&comment=Scansioni&access_r=setup_users&everyone_access=rw&sid={{sid}}",
+      "expectRegex": "(?i)<result>0</result>|exist"
+    }
+  ],
+  "createUser": [
+    {
+      "label": "utente {{user}}",
+      "method": "GET",
+      "writes": true,
+      "path": "/cgi-bin/priv/privWizard.cgi?wiz_func=user_create&a_username={{user}}&a_passwd={{password}}&vol_ID=1&send_mail=0&sid={{sid}}",
+      "expectRegex": "(?i)<result>0</result>"
+    }
+  ],
+  "setPermissions": [],
+  "checkSmb": []
+}

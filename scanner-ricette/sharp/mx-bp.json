@@ -1,0 +1,99 @@
+{
+  "id": "sharp-mx-bp",
+  "brand": "sharp",
+  "family": "MX / BP con pagine web Sharp OSA",
+  "validata": false,
+  "collaudo": null,
+  "note": "Accesso amministratore e rubrica tramite le pagine web delle Sharp MX/BP. Indirizzi e nomi dei campi da confermare con la prova a secco su una macchina reale; finché 'validata' è false l'app chiede conferma prima di scrivere. La password di fabbrica viene provata una sola volta.",
+  "modelMatch": "\\b(MX|BP)-[A-Z0-9]",
+  "fingerprint": {
+    "path": "/",
+    "regex": "(?i)sharp|main\\.html|login\\.html"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "defaultAdmin": {
+    "user": "admin",
+    "password": "admin"
+  },
+  "pathFormat": "unc",
+  "login": [
+    {
+      "label": "pagina di accesso",
+      "method": "GET",
+      "path": "/login.html?/main.html",
+      "extract": {
+        "token2": "name=\"token2\"\\s+value=\"([^\"]+)\""
+      },
+      "extractOptional": true
+    },
+    {
+      "label": "accesso amministratore",
+      "method": "POST",
+      "path": "/login.html?/main.html",
+      "form": {
+        "ggt_select(10009)": "3",
+        "ggt_textbox(10003)": "{{adminPassword}}",
+        "action": "loginbtn",
+        "token2": "{{token2}}",
+        "ordinate": "0"
+      },
+      "failRegex": "(?i)password.{0,40}(errat|incorrect|invalid)",
+      "expectStatus": [
+        200,
+        302
+      ]
+    }
+  ],
+  "backup": {
+    "label": "elenco rubrica",
+    "method": "GET",
+    "path": "/address_list.html",
+    "saveBodyAs": "rubrica_backup_sharp.html"
+  },
+  "addEntry": [
+    {
+      "label": "modulo nuova voce",
+      "method": "GET",
+      "path": "/address_entry_add.html",
+      "extract": {
+        "token2": "name=\"token2\"\\s+value=\"([^\"]+)\""
+      },
+      "extractOptional": true
+    },
+    {
+      "label": "nuova voce di rubrica {{name}}",
+      "method": "POST",
+      "path": "/address_entry_add.html",
+      "writes": true,
+      "form": {
+        "token2": "{{token2}}",
+        "ggt_textbox(1)": "{{name}}",
+        "ggt_textbox(2)": "{{name}}",
+        "ggt_select(3)": "smb",
+        "ggt_textbox(20)": "{{path}}",
+        "ggt_textbox(21)": "{{user}}",
+        "ggt_textbox(22)": "{{password}}",
+        "ggt_select(23)": "pdf",
+        "ggt_checkbox(30)": "1",
+        "action": "submitbtn"
+      },
+      "failRegex": "(?i)errore|error"
+    }
+  ],
+  "verify": [
+    {
+      "label": "rilettura rubrica",
+      "method": "GET",
+      "path": "/address_list.html",
+      "expectRegex": "{{name}}"
+    }
+  ],
+  "logout": {
+    "label": "uscita",
+    "method": "GET",
+    "path": "/logout.html"
+  }
+}

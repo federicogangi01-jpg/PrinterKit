@@ -1,0 +1,96 @@
+{
+  "id": "synology-dsm",
+  "brand": "synology",
+  "validata": false,
+  "collaudo": null,
+  "note": "API web di DSM 7 (SYNO.API.Auth, SYNO.Core.Share, SYNO.Core.User, SYNO.Core.Share.Permission). Il gruppo 'users' rappresenta tutti gli utenti del NAS. Da collaudare su un NAS reale.",
+  "baseUrls": [
+    "https://{{ip}}:5001",
+    "http://{{ip}}:5000"
+  ],
+  "login": [
+    {
+      "label": "accesso DSM",
+      "method": "GET",
+      "path": "/webapi/entry.cgi?api=SYNO.API.Auth&version=6&method=login&account={{adminUser}}&passwd={{adminPassword}}&format=sid&enable_syno_token=yes",
+      "extract": {
+        "sid": "\"sid\"\\s*:\\s*\"([^\"]+)\"",
+        "synotoken": "\"synotoken\"\\s*:\\s*\"([^\"]+)\""
+      },
+      "extractOptional": false,
+      "expectRegex": "\"success\"\\s*:\\s*true"
+    }
+  ],
+  "createShare": [
+    {
+      "label": "cartella condivisa {{share}}",
+      "method": "POST",
+      "path": "/webapi/entry.cgi",
+      "writes": true,
+      "headers": {
+        "X-SYNO-TOKEN": "{{synotoken}}"
+      },
+      "form": {
+        "api": "SYNO.Core.Share",
+        "version": "1",
+        "method": "create",
+        "name": "\"{{share}}\"",
+        "shareinfo": "{\"name\":\"{{share}}\",\"vol_path\":\"/volume1\",\"desc\":\"Scansioni (PrinterKit)\",\"enable_recycle_bin\":true}",
+        "_sid": "{{sid}}"
+      },
+      "expectRegex": "\"success\"\\s*:\\s*true|\"code\"\\s*:\\s*3301"
+    }
+  ],
+  "createUser": [
+    {
+      "label": "utente {{user}}",
+      "method": "POST",
+      "path": "/webapi/entry.cgi",
+      "writes": true,
+      "headers": {
+        "X-SYNO-TOKEN": "{{synotoken}}"
+      },
+      "form": {
+        "api": "SYNO.Core.User",
+        "version": "1",
+        "method": "create",
+        "name": "{{user}}",
+        "password": "{{password}}",
+        "description": "Scansione su cartella (PrinterKit)",
+        "cannot_chg_passwd": "true",
+        "expired": "normal",
+        "_sid": "{{sid}}"
+      },
+      "expectRegex": "\"success\"\\s*:\\s*true"
+    }
+  ],
+  "setPermissions": [
+    {
+      "label": "permessi lettura/scrittura",
+      "method": "POST",
+      "path": "/webapi/entry.cgi",
+      "writes": true,
+      "headers": {
+        "X-SYNO-TOKEN": "{{synotoken}}"
+      },
+      "form": {
+        "api": "SYNO.Core.Share.Permission",
+        "version": "1",
+        "method": "set",
+        "name": "{{share}}",
+        "user_group_type": "local_group",
+        "permissions": "[{\"name\":\"users\",\"is_readonly\":false,\"is_writable\":true,\"is_deny\":false}]",
+        "_sid": "{{sid}}"
+      },
+      "expectRegex": "\"success\"\\s*:\\s*true"
+    }
+  ],
+  "checkSmb": [
+    {
+      "label": "impostazioni SMB",
+      "method": "GET",
+      "path": "/webapi/entry.cgi?api=SYNO.Core.FileServ.SMB&version=3&method=get&_sid={{sid}}",
+      "expectRegex": "\"enable_samba\"\\s*:\\s*true"
+    }
+  ]
+}

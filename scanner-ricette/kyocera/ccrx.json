@@ -1,0 +1,120 @@
+{
+  "id": "kyocera-ccrx",
+  "brand": "kyocera",
+  "family": "ECOSYS / TASKalfa con Command Center RX",
+  "validata": false,
+  "collaudo": null,
+  "note": "Accesso e rubrica tramite le pagine di Command Center RX. Gli indirizzi delle pagine e i nomi dei campi vanno confermati con la prova a secco (-WhatIf) su una macchina reale: finché 'validata' è false l'app chiede conferma prima di scrivere. Se un passo fallisce, usare il file richiesta_ricetta_<modello>.json salvato dall'app per correggerli.",
+  "modelMatch": "ECOSYS|TASKalfa",
+  "fingerprint": {
+    "path": "/",
+    "regex": "(?i)Command Center|startwlm|KYOCERA"
+  },
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "defaultAdmin": {
+    "user": "Admin",
+    "password": "Admin"
+  },
+  "pathFormat": "split-backslash",
+  "login": [
+    {
+      "label": "pagina di accesso",
+      "method": "GET",
+      "path": "/startwlm/Start_Wlm.htm"
+    },
+    {
+      "label": "accesso amministratore",
+      "method": "POST",
+      "path": "/startwlm/login.cgi",
+      "form": {
+        "okhtmfile": "/startwlm/Start_Wlm.htm",
+        "failhtmfile": "/startwlm/StartAccessDenied.htm",
+        "func": "authLogin",
+        "arg03_LoginType": "",
+        "arg04_LoginFrom": "",
+        "language": "../wlmeng/index.htm",
+        "hidden": "",
+        "arg01_UserName": "{{adminUser}}",
+        "arg02_Password": "{{adminPassword}}",
+        "arg05_AccountId": "",
+        "Login": "Login"
+      },
+      "failRegex": "StartAccessDenied|AccessDenied",
+      "expectStatus": [
+        200,
+        302
+      ]
+    }
+  ],
+  "backup": {
+    "label": "esportazione rubrica",
+    "method": "GET",
+    "path": "/basic/AddrBook_Address_List.htm",
+    "saveBodyAs": "rubrica_backup_kyocera.html"
+  },
+  "readSettings": {
+    "label": "protocolli di rete",
+    "method": "GET",
+    "path": "/network/Prtcl_Smb.htm",
+    "extract": {
+      "smbClient": "name=\"SmbClient\"[^>]*value=\"(\\d)\"[^>]*checked"
+    },
+    "extractOptional": true
+  },
+  "protocols": [
+    {
+      "name": "client SMB",
+      "var": "smbClient",
+      "enabledValue": "1",
+      "enable": [
+        {
+          "label": "attiva client SMB",
+          "method": "POST",
+          "path": "/network/Prtcl_Smb.cgi",
+          "form": {
+            "SmbClient": "1",
+            "SmbClientPort": "445",
+            "Submit": "Submit"
+          },
+          "writes": true
+        }
+      ]
+    }
+  ],
+  "addEntry": [
+    {
+      "label": "nuova voce di rubrica {{name}}",
+      "method": "POST",
+      "path": "/basic/AddrBook_Address_Add.cgi",
+      "writes": true,
+      "form": {
+        "func": "addAddress",
+        "Name": "{{name}}",
+        "Furigana": "{{name}}",
+        "SmbHostName": "{{host}}",
+        "SmbPortNo": "445",
+        "SmbPath": "{{path}}",
+        "SmbLoginName": "{{domain}}\\{{user}}",
+        "SmbLoginPassword": "{{password}}",
+        "Submit": "Submit"
+      },
+      "failRegex": "(?i)error|errore"
+    }
+  ],
+  "verify": [
+    {
+      "label": "rilettura rubrica",
+      "method": "GET",
+      "path": "/basic/AddrBook_Address_List.htm",
+      "expectRegex": "{{name}}"
+    }
+  ],
+  "logout": {
+    "label": "uscita",
+    "method": "GET",
+    "path": "/startwlm/Logout.cgi"
+  }
+}

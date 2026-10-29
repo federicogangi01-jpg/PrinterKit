@@ -1,0 +1,15 @@
+# Generato da manutenzione/genera_indice_xp.py - non modificare a mano
+# marca-id, marca, match, pacchetto-id, famiglia, versione, osMin, osMax, arch, modelli, tipo, infHint, driverName, sha256, status
+hp	HP	\bHP\b|Hewlett[- ]?Packard|LaserJet|OfficeJet|PageWide|DesignJet|DeskJet												marca
+canon	Canon	Canon|imageRUNNER|i-SENSYS|imageCLASS|imagePRESS|PIXMA|MAXIFY|\bLBP\d												marca
+kyocera	Kyocera	KYOCERA|ECOSYS|TASKalfa|\bFS-\d												marca
+ricoh	Ricoh	RICOH|Aficio|\bNRG\b|nashuatec|Savin|Lanier|\bIM C?\d{3,4}|\bMP C?\d{3,4}|\bSP C?\d{3}												marca
+xerox	Xerox	Xerox|VersaLink|AltaLink|WorkCentre|Phaser|PrimeLink|ColorQube												marca
+brother	Brother	Brother|\bHL-|\bMFC-|\bDCP-												marca
+epson	Epson	EPSON|WorkForce|EcoTank|\bAM-C\d												marca
+konicaminolta	Konica Minolta	KONICA|MINOLTA|bizhub|\bineo\b|\bDevelop\b|Olivetti d-Color												marca
+lexmark	Lexmark	Lexmark												marca
+sharp	Sharp	SHARP|\bMX-[A-Z0-9]|\bBP-[0-9]|\bAR-[0-9]												marca
+toshiba	Toshiba	TOSHIBA|e-STUDIO												marca
+oki	OKI	\bOKI\b|OKIDATA|\bB\d{3,4}dn|\bC\d{3,4}dn|\bMC\d{3}|\bMB\d{3}|\bES\d{4}												marca
+samsung	Samsung (driver HP)	Samsung|\bSL-[A-Z]|\bML-\d|\bSCX-\d|\bCLX-\d|\bCLP-\d|\bM\d{4}F?N?D?W?\b												marca

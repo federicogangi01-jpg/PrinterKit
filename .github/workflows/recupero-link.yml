@@ -1,0 +1,128 @@
+# Recupero link con Gemini API, piano gratuito (§15.3). Gemini non cerca su internet:
+# legge solo i link della pagina ufficiale. Ogni proposta è validata (link presente nella pagina,
+# dominio ufficiale, download, firma digitale, architettura dagli INF) prima della Pull Request.
+name: recupero-link
+on:
+  workflow_dispatch:
+    inputs:
+      modo:
+        description: 'rotti | popola | nuove'
+        required: true
+        default: rotti
+  push:
+    branches: [main]
+    paths: [catalogo/pagine_ufficiali.json]
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+concurrency: { group: recupero, cancel-in-progress: false }
+env:
+  GEMINI_MODEL: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+  PK_MAX_PAGINE: ${{ vars.PK_MAX_PAGINE || '20' }}
+  PK_ATTESA_SEC: ${{ vars.PK_ATTESA_SEC || '7' }}
+jobs:
+  cerca:
+    runs-on: ubuntu-latest
+    outputs:
+      candidati: ${{ steps.n.outputs.candidati }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - name: Validazione dello schema
+        run: python manutenzione/valida_catalogo.py
+      - name: Browser headless per le pagine dinamiche
+        run: pip install playwright==1.48.0 && python -m playwright install --with-deps chromium
+      - name: Gemini sulle pagine ufficiali
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          MODO="${{ github.event.inputs.modo }}"
+          [ -z "$MODO" ] && MODO=nuove
+          python manutenzione/recupero_link.py --$MODO
+      - id: n
+        run: echo "candidati=$(python -c 'import json;print(len(json.load(open("manutenzione/out/candidati.json"))))')" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        with: { name: candidati, path: manutenzione/out/ }
+
+  firma-windows:
+    needs: cerca
+    if: needs.cerca.outputs.candidati != '0'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: candidati, path: manutenzione/out }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: python manutenzione/scarica_candidati.py manutenzione/out/candidati.json scaricati-win windows
+      - shell: powershell
+        run: ./manutenzione/verifica_firma.ps1 -Elenco manutenzione/out/candidati.json -Cartella scaricati-win
+      - uses: actions/upload-artifact@v4
+        with: { name: firma-win, path: [scaricati-win/*.json] }
+
+  firma-macos:
+    needs: cerca
+    if: needs.cerca.outputs.candidati != '0'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: candidati, path: manutenzione/out }
+      - run: python3 manutenzione/scarica_candidati.py manutenzione/out/candidati.json scaricati-mac macos
+      - run: zsh manutenzione/verifica_firma.sh manutenzione/out/candidati.json scaricati-mac
+      - uses: actions/upload-artifact@v4
+        with: { name: firma-mac, path: [scaricati-mac/*.json] }
+
+  proponi:
+    needs: [cerca, firma-windows, firma-macos]
+    if: always() && needs.cerca.result == 'success'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: { name: candidati, path: manutenzione/out }
+      - uses: actions/download-artifact@v4
+        with: { name: firma-win, path: scaricati-win }
+        continue-on-error: true
+      - uses: actions/download-artifact@v4
+        with: { name: firma-mac, path: scaricati-mac }
+        continue-on-error: true
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - id: a
+        run: |
+          mkdir -p scaricati-win scaricati-mac
+          python manutenzione/applica_risultati.py --candidati manutenzione/out/candidati.json scaricati-win scaricati-mac
+          python manutenzione/valida_catalogo.py
+          python manutenzione/genera_indice_xp.py
+      - name: Pull Request (nessun commit diretto)
+        if: steps.a.outputs.aggiunti != '0'
+        run: |
+          B="catalogo/recupero-$(date +%Y%m%d-%H%M%S)"
+          git config user.name "PrinterKit bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$B"
+          git add catalogo/drivers.json cache/indice-xp.txt
+          git commit -m "Catalogo: pacchetti trovati da recupero-link"
+          git push -u origin "$B"
+          gh pr create --title "Catalogo: nuovi link driver da approvare" --body-file manutenzione/out/pr.md --base main --head "$B"
+      - name: Issue per quello che non torna
+        run: |
+          python - <<'PY'
+          import json
+          s = json.load(open("manutenzione/out/scartati.json"))
+          righe = []
+          for x in s:
+              v = x.get("voce", {})
+              p = x.get("proposta", {})
+              righe.append(f"- {v.get('manufacturer')} {v.get('pageUrl')} {p.get('url','')}: {x['motivo']}")
+          extra = open("manutenzione/out/issue.md").read() if __import__("os").path.exists("manutenzione/out/issue.md") else ""
+          testo = ("Voci da verificare a mano (stato da_verificare):\n\n" + "\n".join(righe) + "\n\n" + extra).strip()
+          open("issue_body.md", "w").write(testo if righe or extra.strip() else "")
+          PY
+          if [ -s issue_body.md ]; then gh issue create --title "recupero-link: voci da verificare ($(date +%F))" --body-file issue_body.md; fi

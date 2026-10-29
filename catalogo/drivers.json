@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-28T23:30:00+01:00",
+  "manufacturers": [
+    {
+      "id": "hp",
+      "name": "HP",
+      "match": "\\bHP\\b|Hewlett[- ]?Packard|LaserJet|OfficeJet|PageWide|DesignJet|DeskJet",
+      "officialDomains": [
+        "hp.com"
+      ],
+      "signerNames": [
+        "HP Inc.",
+        "Hewlett-Packard Company",
+        "HP Development Company"
+      ],
+      "macSignerNames": [
+        "HP Inc."
+      ],
+      "packages": []
+    },
+    {
+      "id": "canon",
+      "name": "Canon",
+      "match": "Canon|imageRUNNER|i-SENSYS|imageCLASS|imagePRESS|PIXMA|MAXIFY|\\bLBP\\d",
+      "officialDomains": [
+        "canon-europe.com",
+        "canon.it",
+        "canon.com",
+        "canon.co.jp",
+        "c-wss.com"
+      ],
+      "signerNames": [
+        "Canon Inc."
+      ],
+      "macSignerNames": [
+        "Canon Inc."
+      ],
+      "packages": []
+    },
+    {
+      "id": "kyocera",
+      "name": "Kyocera",
+      "match": "KYOCERA|ECOSYS|TASKalfa|\\bFS-\\d",
+      "officialDomains": [
+        "kyoceradocumentsolutions.eu",
+        "kyoceradocumentsolutions.com",
+        "kyoceradocumentsolutions.it",
+        "kyostatics.net"
+      ],
+      "signerNames": [
+        "KYOCERA Document Solutions Inc."
+      ],
+      "macSignerNames": [
+        "KYOCERA Document Solutions Inc."
+      ],
+      "packages": []
+    },
+    {
+      "id": "ricoh",
+      "name": "Ricoh",
+      "match": "RICOH|Aficio|\\bNRG\\b|nashuatec|Savin|Lanier|\\bIM C?\\d{3,4}|\\bMP C?\\d{3,4}|\\bSP C?\\d{3}",
+      "officialDomains": [
+        "ricoh.com",
+        "ricoh-europe.com",
+        "ricoh.it"
+      ],
+      "signerNames": [
+        "RICOH COMPANY, LTD.",
+        "Ricoh Company, Ltd."
+      ],
+      "macSignerNames": [
+        "RICOH COMPANY, LTD."
+      ],
+      "packages": []
+    },
+    {
+      "id": "xerox",
+      "name": "Xerox",
+      "match": "Xerox|VersaLink|AltaLink|WorkCentre|Phaser|PrimeLink|ColorQube",
+      "officialDomains": [
+        "xerox.com"
+      ],
+      "signerNames": [
+        "Xerox Corporation"
+      ],
+      "macSignerNames": [
+        "Xerox Corporation"
+      ],
+      "packages": []
+    },
+    {
+      "id": "brother",
+      "name": "Brother",
+      "match": "Brother|\\bHL-|\\bMFC-|\\bDCP-",
+      "officialDomains": [
+        "brother.com",
+        "brother.it",
+        "brother.eu"
+      ],
+      "signerNames": [
+        "Brother Industries, Ltd."
+      ],
+      "macSignerNames": [
+        "Brother Industries, Ltd."
+      ],
+      "packages": []
+    },
+    {
+      "id": "epson",
+      "name": "Epson",
+      "match": "EPSON|WorkForce|EcoTank|\\bAM-C\\d",
+      "officialDomains": [
+        "epson.eu",
+        "epson.it",
+        "epson.com",
+        "epson.net",
+        "epson.biz"
+      ],
+      "signerNames": [
+        "SEIKO EPSON Corporation",
+        "Seiko Epson Corporation"
+      ],
+      "macSignerNames": [
+        "SEIKO EPSON Corporation"
+      ],
+      "packages": []
+    },
+    {
+      "id": "konicaminolta",
+      "name": "Konica Minolta",
+      "match": "KONICA|MINOLTA|bizhub|\\bineo\\b|\\bDevelop\\b|Olivetti d-Color",
+      "officialDomains": [
+        "konicaminolta.eu",
+        "konicaminolta.com",
+        "konicaminolta.it",
+        "konicaminolta.jp",
+        "develop.eu"
+      ],
+      "signerNames": [
+        "KONICA MINOLTA, INC.",
+        "Konica Minolta Business Solutions"
+      ],
+      "macSignerNames": [
+        "KONICA MINOLTA, INC."
+      ],
+      "packages": []
+    },
+    {
+      "id": "lexmark",
+      "name": "Lexmark",
+      "match": "Lexmark",
+      "officialDomains": [
+        "lexmark.com"
+      ],
+      "signerNames": [
+        "Lexmark International, Inc.",
+        "Lexmark International Inc."
+      ],
+      "macSignerNames": [
+        "Lexmark International, Inc."
+      ],
+      "packages": []
+    },
+    {
+      "id": "sharp",
+      "name": "Sharp",
+      "match": "SHARP|\\bMX-[A-Z0-9]|\\bBP-[0-9]|\\bAR-[0-9]",
+      "officialDomains": [
+        "sharp.eu",
+        "sharp.it",
+        "global.sharp",
+        "jp.sharp",
+        "sharp.co.jp",
+        "sharpusa.com"
+      ],
+      "signerNames": [
+        "SHARP CORPORATION",
+        "Sharp Corporation"
+      ],
+      "macSignerNames": [
+        "SHARP CORPORATION"
+      ],
+      "packages": []
+    },
+    {
+      "id": "toshiba",
+      "name": "Toshiba",
+      "match": "TOSHIBA|e-STUDIO",
+      "officialDomains": [
+        "toshibatec.eu",
+        "toshibatec.com",
+        "toshibatec.it",
+        "toshibatec.co.jp"
+      ],
+      "signerNames": [
+        "Toshiba Tec Corporation",
+        "TOSHIBA TEC CORPORATION"
+      ],
+      "macSignerNames": [
+        "Toshiba Tec Corporation"
+      ],
+      "packages": []
+    },
+    {
+      "id": "oki",
+      "name": "OKI",
+      "match": "\\bOKI\\b|OKIDATA|\\bB\\d{3,4}dn|\\bC\\d{3,4}dn|\\bMC\\d{3}|\\bMB\\d{3}|\\bES\\d{4}",
+      "officialDomains": [
+        "oki.com",
+        "oki.eu"
+      ],
+      "signerNames": [
+        "Oki Electric Industry Co., Ltd.",
+        "OKI Electric Industry Co., Ltd."
+      ],
+      "macSignerNames": [
+        "Oki Electric Industry Co., Ltd."
+      ],
+      "packages": []
+    },
+    {
+      "id": "samsung",
+      "name": "Samsung (driver HP)",
+      "match": "Samsung|\\bSL-[A-Z]|\\bML-\\d|\\bSCX-\\d|\\bCLX-\\d|\\bCLP-\\d|\\bM\\d{4}F?N?D?W?\\b",
+      "officialDomains": [
+        "hp.com"
+      ],
+      "signerNames": [
+        "HP Inc.",
+        "Samsung Electronics Co., Ltd.",
+        "Samsung Electronics CO., LTD."
+      ],
+      "macSignerNames": [
+        "HP Inc.",
+        "Samsung Electronics Co., Ltd."
+      ],
+      "packages": []
+    }
+  ]
+}

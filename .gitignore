@@ -1,0 +1,9 @@
+log/
+cache/*/
+!cache/indice-xp.txt
+manutenzione/out/
+__pycache__/
+*.pyc
+.DS_Store
+tools/7zip/*.exe
+tools/7zip/*.dll

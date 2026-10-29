@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "printerkit/catalogo/schema.json",
+  "title": "Catalogo driver PrinterKit",
+  "type": "object",
+  "required": ["schemaVersion", "updatedAt", "manufacturers"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "updatedAt": { "type": "string", "minLength": 10 },
+    "manufacturers": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/manufacturer" }
+    }
+  },
+  "$defs": {
+    "manufacturer": {
+      "type": "object",
+      "required": ["id", "name", "match", "officialDomains", "signerNames", "packages"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "name": { "type": "string", "minLength": 1 },
+        "match": { "type": "string", "minLength": 1 },
+        "officialDomains": {
+          "type": "array", "minItems": 1,
+          "items": { "type": "string", "pattern": "^[a-z0-9.-]+\\.[a-z]+$" }
+        },
+        "signerNames": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "macSignerNames": { "type": "array", "items": { "type": "string" } },
+        "packages": { "type": "array", "items": { "$ref": "#/$defs/package" } }
+      }
+    },
+    "package": {
+      "type": "object",
+      "required": ["id", "driverFamily", "os", "osMin", "arch", "models", "url", "sourcePage", "fileType", "status", "lastChecked"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9.-]+$" },
+        "driverFamily": { "type": "string" },
+        "version": { "type": ["string", "null"] },
+        "os": { "enum": ["windows", "macos"] },
+        "osMin": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)*$" },
+        "osMax": { "type": ["string", "null"], "pattern": "^[0-9]+(\\.[0-9]+)*$" },
+        "buildMin": { "type": ["integer", "null"] },
+        "buildMax": { "type": ["integer", "null"] },
+        "arch": {
+          "type": "array", "minItems": 1,
+          "items": { "enum": ["x86", "x64", "arm64", "intel", "applesilicon"] }
+        },
+        "language": { "enum": ["pcl6", "pcl5", "ps", "gdi", "altro", null] },
+        "models": { "type": "string", "minLength": 1 },
+        "url": { "type": ["string", "null"], "pattern": "^https://" },
+        "sourcePage": { "type": "string", "pattern": "^https://" },
+        "sha256": { "type": ["string", "null"], "pattern": "^([a-f0-9]{64})?$" },
+        "size": { "type": ["integer", "null"] },
+        "etag": { "type": ["string", "null"] },
+        "lastModified": { "type": ["string", "null"] },
+        "fileType": { "enum": ["zip", "exe", "pkg", "dmg", "cab", "inf"] },
+        "extractArgs": { "type": ["string", "null"] },
+        "infHint": { "type": ["string", "null"] },
+        "driverName": { "type": ["string", "null"] },
+        "lastChecked": { "type": ["string", "null"] },
+        "status": { "enum": ["ok", "link_rotto", "da_verificare", "nessun_driver"] },
+        "notes": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "ok" } } },
+          "then": { "properties": { "url": { "type": "string" } } }
+        }
+      ]
+    }
+  }
+}

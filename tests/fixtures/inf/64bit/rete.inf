@@ -1,0 +1,6 @@
+[Version]
+Class=Net
+[Manufacturer]
+X=Y,NTamd64
+[Y.NTamd64]
+"Scheda di rete"=S

@@ -1,0 +1,9 @@
+[Version]
+Class=Printer
+Provider=%P%
+[Manufacturer]
+%P%=Kyo
+[Kyo]
+"Kyocera ECOSYS M2540dn KX (32)" = S
+[Strings]
+P="Kyocera"

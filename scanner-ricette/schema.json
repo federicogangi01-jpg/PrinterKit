@@ -1,0 +1,193 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ricetta PrinterKit (multifunzione o NAS)",
+  "type": "object",
+  "required": [
+    "id",
+    "validata"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "brand": {
+      "type": "string"
+    },
+    "family": {
+      "type": "string"
+    },
+    "validata": {
+      "type": "boolean",
+      "description": "true solo dopo il collaudo su una macchina reale (prova a secco + scrittura + rilettura)"
+    },
+    "collaudo": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "modello e firmware su cui è stata collaudata"
+    },
+    "note": {
+      "type": "string"
+    },
+    "modelMatch": {
+      "type": "string"
+    },
+    "fingerprint": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "regex": {
+          "type": "string"
+        }
+      }
+    },
+    "schemes": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "https",
+          "http"
+        ]
+      }
+    },
+    "baseUrls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "defaultAdmin": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "pathFormat": {
+      "enum": [
+        "unc",
+        "split-backslash",
+        "split-slash"
+      ]
+    },
+    "login": {
+      "$ref": "#/$defs/steps"
+    },
+    "backup": {
+      "$ref": "#/$defs/step"
+    },
+    "readSettings": {
+      "$ref": "#/$defs/step"
+    },
+    "protocols": {
+      "type": "array"
+    },
+    "addEntry": {
+      "$ref": "#/$defs/steps"
+    },
+    "verify": {
+      "$ref": "#/$defs/steps"
+    },
+    "logout": {
+      "$ref": "#/$defs/step"
+    },
+    "createShare": {
+      "$ref": "#/$defs/steps"
+    },
+    "createUser": {
+      "$ref": "#/$defs/steps"
+    },
+    "setPermissions": {
+      "$ref": "#/$defs/steps"
+    },
+    "checkSmb": {
+      "$ref": "#/$defs/steps"
+    }
+  },
+  "$defs": {
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE"
+          ]
+        },
+        "path": {
+          "type": "string"
+        },
+        "form": {
+          "type": "object"
+        },
+        "body": {
+          "type": "string"
+        },
+        "escape": {
+          "enum": [
+            "none",
+            "url",
+            "xml",
+            "json"
+          ]
+        },
+        "contentType": {
+          "type": "string"
+        },
+        "headers": {
+          "type": "object"
+        },
+        "extract": {
+          "type": "object"
+        },
+        "extractOptional": {
+          "type": "boolean"
+        },
+        "expectStatus": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "expectRegex": {
+          "type": "string"
+        },
+        "failRegex": {
+          "type": "string"
+        },
+        "writes": {
+          "type": "boolean",
+          "description": "passo che modifica la macchina: saltato nella prova a secco"
+        },
+        "noRedirect": {
+          "type": "boolean"
+        },
+        "saveBodyAs": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,806 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-28",
+  "pagine": [
+    {
+      "manufacturer": "hp",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11"
+      ],
+      "arch": [
+        "x64",
+        "arm64"
+      ],
+      "pageUrl": "https://support.hp.com/it-it/drivers/hp-universal-print-driver-series-for-windows/503548",
+      "needsBrowser": true,
+      "notes": "Raggiunta da https://www.hp.com/go/upd (redirect 301 ufficiale). Pagina dinamica: il download automatico è andato in timeout; scegliere 'PCL6' nell'elenco.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "hp",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.hp.com/it-it/drivers/hp-universal-print-driver-series-for-windows/503548",
+      "needsBrowser": true,
+      "notes": "Le versioni UPD per Windows 7 sono nella sezione versioni precedenti della stessa pagina: da confermare.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "hp",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://support.hp.com/it-it/drivers/hp-universal-print-driver-series-for-windows/503548",
+      "needsBrowser": true,
+      "notes": "HP ha distribuito UPD 5.x per XP; non confermato che sia ancora scaricabile. Se assente → nessun_driver.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "hp",
+      "scope": "modello",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://support.hp.com/it-it/drivers",
+      "needsBrowser": true,
+      "notes": "Per macOS HP pubblica pacchetti per modello (HP Easy Start / driver di stampa). AirPrint escluso dalle regole del kit.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "canon",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.canon-europe.com/support/business-product-support/",
+      "needsBrowser": true,
+      "notes": "Generic Plus UFR II / PCL6 si scaricano dalla scheda 'Driver' della pagina del modello (es. imageRUNNER ADVANCE). Il sito canon.it ha risposto 403 all'accesso automatico. File su gdlp01.c-wss.com (CDN Canon).",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "canon",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.canon-europe.com/support/business-product-support/",
+      "needsBrowser": true,
+      "notes": "Versioni Generic Plus per XP presenti solo per modelli vecchi: verificare per modello.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "canon",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.canon-europe.com/support/business-product-support/",
+      "needsBrowser": true,
+      "notes": "UFR II/UFRII LT Printer Driver & Utilities for Mac, per modello.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "kyocera",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64",
+        "arm64"
+      ],
+      "pageUrl": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+      "needsBrowser": true,
+      "notes": "Pagina download Europa verificata; rimanda al 'User Support Page' globale (kyoceradocumentsolutions.com/support_product) dove si sceglie il modello. KX Driver universale v8.4 (Windows 10/11).",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "kyocera",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+      "needsBrowser": true,
+      "notes": "KX 7.x supportava XP per i modelli vecchi; da confermare per modello.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "kyocera",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.kyoceradocumentsolutions.eu/en/support/downloads.html",
+      "needsBrowser": true,
+      "notes": "Kyocera OS X driver (pkg) per modello.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "ricoh",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+      "needsBrowser": false,
+      "notes": "Pagina verificata: 'PCL6 Driver for Universal Print' 4.46.0.0 (06/10/2026) per Windows 10/11 64 bit e Windows 10 32 bit; file su support.ricoh.com. Esiste anche la versione V4 su op-drv-ds1.support.ricoh.com.",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "ricoh",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+      "needsBrowser": false,
+      "notes": "La pagina verificata non elenca più Windows 7: cercare su pagine di modelli più vecchi o archivio Ricoh.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "ricoh",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+      "needsBrowser": false,
+      "notes": "Windows XP non elencato sulla pagina verificata.",
+      "stato": "nessun_driver",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "ricoh",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+      "needsBrowser": false,
+      "notes": "Pagina verificata: 'PPD Installer' 3.8.0.0 per macOS 13–26 (nessun driver PCL per Mac).",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "xerox",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11"
+      ],
+      "arch": [
+        "x64",
+        "arm64"
+      ],
+      "pageUrl": "https://support.xerox.com/en-cy/content/157400",
+      "needsBrowser": true,
+      "notes": "Pagina verificata: Global Print Driver 5.1076.4.0 (23/06/2026), Windows 10/11 x64 e Windows 11 ARM64. Il pulsante Download si attiva solo dopo l'accettazione dei termini: il link diretto non è nel codice HTML.",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "xerox",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.support.xerox.com/en-us/product/global-printer-driver/content/127244",
+      "needsBrowser": true,
+      "notes": "Pagina ufficiale per sistemi precedenti (Windows 7/8/8.1/Vista) segnalata dalla ricerca, non aperta.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "xerox",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.support.xerox.com/en-us/product/global-printer-driver/content/127244",
+      "needsBrowser": true,
+      "notes": "XP non confermato.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "xerox",
+      "scope": "modello",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.support.xerox.com/it-it",
+      "needsBrowser": true,
+      "notes": "Per macOS Xerox pubblica il pacchetto per modello (es. VersaLink → Downloads).",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "brother",
+      "scope": "serie",
+      "series": "HL-L",
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.brother.com/g/b/productsearch.aspx?c=it&lang=it",
+      "needsBrowser": true,
+      "notes": "Stampanti laser HL-L: cercare il modello e scaricare 'Driver della stampante' (non il pacchetto completo). L'accesso automatico alla pagina download ha dato errore: verificare dal browser.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "brother",
+      "scope": "serie",
+      "series": "MFC-L",
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.brother.com/g/b/productsearch.aspx?c=it&lang=it",
+      "needsBrowser": true,
+      "notes": "Multifunzione laser MFC-L: cercare il modello e scaricare 'Driver della stampante' (non il pacchetto completo). L'accesso automatico alla pagina download ha dato errore: verificare dal browser.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "brother",
+      "scope": "serie",
+      "series": "DCP-L",
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.brother.com/g/b/productsearch.aspx?c=it&lang=it",
+      "needsBrowser": true,
+      "notes": "Multifunzione laser DCP-L: cercare il modello e scaricare 'Driver della stampante' (non il pacchetto completo). L'accesso automatico alla pagina download ha dato errore: verificare dal browser.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "brother",
+      "scope": "serie",
+      "series": "MFC-J",
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.brother.com/g/b/productsearch.aspx?c=it&lang=it",
+      "needsBrowser": true,
+      "notes": "Inkjet MFC-J (ufficio): cercare il modello e scaricare 'Driver della stampante' (non il pacchetto completo). L'accesso automatico alla pagina download ha dato errore: verificare dal browser.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "brother",
+      "scope": "serie",
+      "series": "HL-L/MFC-L/DCP-L",
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://support.brother.com/g/b/productsearch.aspx?c=it&lang=it",
+      "needsBrowser": true,
+      "notes": "XP disponibile solo per alcuni modelli più vecchi.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "brother",
+      "scope": "serie",
+      "series": "HL-L/MFC-L/DCP-L",
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://support.brother.com/g/b/productsearch.aspx?c=it&lang=it",
+      "needsBrowser": true,
+      "notes": "Brother per macOS recenti pubblica spesso solo il pacchetto AirPrint (escluso): in quel caso nessun_driver per il modello.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "epson",
+      "scope": "universale",
+      "series": "WorkForce Pro / WorkForce Enterprise / AM-C",
+      "os": [
+        "windows-10",
+        "windows-11"
+      ],
+      "arch": [
+        "x64",
+        "x86"
+      ],
+      "pageUrl": "https://www.epson.it/it_IT/assistenza",
+      "needsBrowser": true,
+      "notes": "Pagina verificata: ricerca per modello. Per WorkForce Pro e AM-C esiste 'EPSON Universal Print Driver' (PCL), nella scheda download del modello.",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "epson",
+      "scope": "serie",
+      "series": "EcoTank / WorkForce",
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.epson.it/it_IT/assistenza",
+      "needsBrowser": true,
+      "notes": "Driver per modello (ESC/P-R).",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "epson",
+      "scope": "serie",
+      "series": "tutte",
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.epson.it/it_IT/assistenza",
+      "needsBrowser": true,
+      "notes": "XP solo per modelli vecchi.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "epson",
+      "scope": "serie",
+      "series": "tutte",
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.epson.it/it_IT/assistenza",
+      "needsBrowser": true,
+      "notes": "Driver Mac per modello; per WorkForce Pro anche il pacchetto PS3.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "konicaminolta",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.konicaminolta.eu/eu-en/support/download-centre",
+      "needsBrowser": true,
+      "notes": "Pagina verificata (Download Centre). Selezione del modello dinamica; Universal Printer Driver (UPD) PCL6/PS e versione V4. Vale anche per Develop/ineo.",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "konicaminolta",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.konicaminolta.eu/eu-en/support/download-centre",
+      "needsBrowser": true,
+      "notes": "UPD per XP solo versioni vecchie.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "konicaminolta",
+      "scope": "modello",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.konicaminolta.eu/eu-en/support/download-centre",
+      "needsBrowser": true,
+      "notes": "Driver Mac per modello bizhub.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "lexmark",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.lexmark.com/en_gb/support/universal-print-driver.html",
+      "needsBrowser": false,
+      "notes": "Pagina verificata: UPD 'Complete drivers and software' e pacchetti PCL XL/PS3 (32/64 bit WHQL, Windows Vista o successivo) su downloads.lexmark.com. Per ARM64: 'Generic v4 XL' su support.lexmark.com.",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "lexmark",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.lexmark.com/en_gb/support/universal-print-driver.html",
+      "needsBrowser": false,
+      "notes": "La UPD attuale richiede Vista o successivo.",
+      "stato": "nessun_driver",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "lexmark",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.lexmark.com/en_gb/support/universal-print-driver.html",
+      "needsBrowser": false,
+      "notes": "Pagina verificata: pacchetti DMG colore e mono (Intel e ARM) su downloads.lexmark.com.",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "sharp",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.sharp.eu/download-centre",
+      "needsBrowser": true,
+      "notes": "Pagina verificata: elenco dei Download Centre per paese su SharpONE; per l'Italia scegliere 'Italy' e filtrare per modello. Driver PCL6/PS e 'SHARP UD3' universale.",
+      "stato": "ok",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "sharp",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.sharp.eu/download-centre",
+      "needsBrowser": true,
+      "notes": "XP solo per modelli MX vecchi.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "sharp",
+      "scope": "modello",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.sharp.eu/download-centre",
+      "needsBrowser": true,
+      "notes": "Driver PPD/Mac per modello; PostScript solo con kit PS installato su alcuni modelli.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "toshiba",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.toshibatec.eu/support/drivers/",
+      "needsBrowser": true,
+      "notes": "Driver 'TOSHIBA Universal Printer 2'. L'accesso automatico è fallito per un errore di certificato TLS del sito: verificare dal browser.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "toshiba",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.toshibatec.eu/support/drivers/",
+      "needsBrowser": true,
+      "notes": "Non confermato.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "toshiba",
+      "scope": "modello",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.toshibatec.eu/support/drivers/",
+      "needsBrowser": true,
+      "notes": "Non confermato.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "oki",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://www.oki.com/it/printing/support/drivers-and-utilities/",
+      "needsBrowser": true,
+      "notes": "Driver 'Universal PCL6' 1.1.3 elencato nelle pagine dei modelli (es. /it/printing/support/drivers-and-utilities/mono/45762042/). Il sito ha risposto 403 all'accesso automatico: lo script dovrà usare il browser headless.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "oki",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://www.oki.com/it/printing/support/drivers-and-utilities/",
+      "needsBrowser": true,
+      "notes": "OKI dichiara di non garantire più XP.",
+      "stato": "nessun_driver",
+      "verificatoIl": "2026-10-28"
+    },
+    {
+      "manufacturer": "oki",
+      "scope": "modello",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://www.oki.com/it/printing/support/drivers-and-utilities/",
+      "needsBrowser": true,
+      "notes": "Driver Mac per modello.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "samsung",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-10",
+        "windows-11",
+        "windows-7"
+      ],
+      "arch": [
+        "x86",
+        "x64"
+      ],
+      "pageUrl": "https://support.hp.com/it-it/drivers",
+      "needsBrowser": true,
+      "notes": "Samsung ha ceduto le stampanti a HP: driver 'Samsung Universal Print Driver 3' distribuito su support.hp.com (cercare il modello Samsung).",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "samsung",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "windows-xp"
+      ],
+      "arch": [
+        "x86"
+      ],
+      "pageUrl": "https://support.hp.com/it-it/drivers",
+      "needsBrowser": true,
+      "notes": "Solo per modelli vecchi, da confermare.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    },
+    {
+      "manufacturer": "samsung",
+      "scope": "universale",
+      "series": null,
+      "os": [
+        "macos"
+      ],
+      "arch": [
+        "intel",
+        "applesilicon"
+      ],
+      "pageUrl": "https://support.hp.com/it-it/drivers",
+      "needsBrowser": true,
+      "notes": "Samsung UPD per Mac su support.hp.com, da confermare.",
+      "stato": "da_verificare",
+      "verificatoIl": null
+    }
+  ]
+}

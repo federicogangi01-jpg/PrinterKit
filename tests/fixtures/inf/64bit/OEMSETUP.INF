@@ -1,0 +1,22 @@
+; INF di esempio (finto) per i test del parser
+[Version]
+Signature="$Windows NT$"
+Class=Printer
+ClassGuid={4D36E979-E325-11CE-BFC1-08002BE10318}
+Provider=%KYOCERA%
+CatalogFile=oemsetup.cat
+
+[Manufacturer]
+%KYOCERA%=Kyocera, NTamd64, NTamd64.6.0
+
+[Kyocera.NTamd64]
+"Kyocera ECOSYS M2540dn KX" = KXSECT, USBPRINT\KyoceraECOSYS_M2C7F1
+%KX_UNIV% = KXSECT, KyoceraUniversal
+"Kyocera ECOSYS M2540dn KPDL" = KXSECT, KyoceraKPDL ; commento
+
+[Kyocera.NTamd64.6.0]
+"Kyocera TASKalfa 2553ci KX" = KXSECT
+
+[Strings]
+KYOCERA="Kyocera"
+KX_UNIV="Kyocera Classic Universaldriver PCL6"
