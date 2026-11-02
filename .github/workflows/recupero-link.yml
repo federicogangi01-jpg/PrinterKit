@@ -61,7 +61,10 @@ jobs:
       - shell: powershell
         run: ./manutenzione/verifica_firma.ps1 -Elenco manutenzione/out/candidati.json -Cartella scaricati-win
       - uses: actions/upload-artifact@v4
-        with: { name: firma-win, path: [scaricati-win/*.json] }
+        with:
+          name: firma-win
+          path: |
+            scaricati-win/*.json
 
   firma-macos:
     needs: cerca
@@ -74,7 +77,10 @@ jobs:
       - run: python3 manutenzione/scarica_candidati.py manutenzione/out/candidati.json scaricati-mac macos
       - run: zsh manutenzione/verifica_firma.sh manutenzione/out/candidati.json scaricati-mac
       - uses: actions/upload-artifact@v4
-        with: { name: firma-mac, path: [scaricati-mac/*.json] }
+        with:
+          name: firma-mac
+          path: |
+            scaricati-mac/*.json
 
   proponi:
     needs: [cerca, firma-windows, firma-macos]

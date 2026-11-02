@@ -24,7 +24,11 @@ jobs:
         run: python manutenzione/controllo_link.py
       - run: python manutenzione/valida_catalogo.py
       - uses: actions/upload-artifact@v4
-        with: { name: controllo, path: [catalogo/drivers.json, manutenzione/out/] }
+        with:
+          name: controllo
+          path: |
+            catalogo/drivers.json
+            manutenzione/out/
 
   firma-windows:
     needs: controlla
@@ -40,7 +44,10 @@ jobs:
       - shell: powershell
         run: ./manutenzione/verifica_firma.ps1 -Elenco manutenzione/out/cambiati.json -Cartella scaricati-win
       - uses: actions/upload-artifact@v4
-        with: { name: firma-win, path: [scaricati-win/*.json] }
+        with:
+          name: firma-win
+          path: |
+            scaricati-win/*.json
 
   firma-macos:
     needs: controlla
@@ -53,7 +60,10 @@ jobs:
       - run: python3 manutenzione/scarica_candidati.py manutenzione/out/cambiati.json scaricati-mac macos
       - run: zsh manutenzione/verifica_firma.sh manutenzione/out/cambiati.json scaricati-mac
       - uses: actions/upload-artifact@v4
-        with: { name: firma-mac, path: [scaricati-mac/*.json] }
+        with:
+          name: firma-mac
+          path: |
+            scaricati-mac/*.json
 
   salva:
     needs: [controlla, firma-windows, firma-macos]

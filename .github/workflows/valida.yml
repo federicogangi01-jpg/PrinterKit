@@ -2,7 +2,7 @@
 name: valida
 on:
   push:
-    paths: ['catalogo/**', 'scanner-ricette/**', 'nas-ricette/**', 'manutenzione/**']
+    paths: ['catalogo/**', 'scanner-ricette/**', 'nas-ricette/**', 'manutenzione/**', 'windows/**', 'tests/**', '.github/workflows/**']
   pull_request:
 jobs:
   valida:
