@@ -9,8 +9,14 @@ if [[ ! "$URL" =~ '^https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)$' ]]
   exit 1
 fi
 REPO="${match[1]}/${match[2]}"
-if [[ "${match[1]}" == TUO-UTENTE || "${match[1]}" == UTENTE ]]; then
-  echo "Sostituisci TUO-UTENTE con il tuo nome utente GitHub."
+if [[ "${match[1]}" == (TUO-UTENTE|UTENTE|NOME-VERO) ]]; then
+  echo "Al posto di ${match[1]} va il tuo nome utente GitHub (lo vedi nell'indirizzo del repository)."
+  exit 1
+fi
+# Prima di toccare qualsiasi file: il repository deve esistere ed essere raggiungibile con il token.
+if ! git ls-remote "$URL.git" >/dev/null 2>&1; then
+  echo "Il repository $URL non esiste oppure il token non ha accesso a questo repository."
+  echo "Apri il repository su github.com e copia l'indirizzo dalla barra del browser."
   exit 1
 fi
 
