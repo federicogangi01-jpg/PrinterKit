@@ -2,7 +2,7 @@
 BeforeAll {
     $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
     foreach ($m in 'Log', 'SystemInfo', 'Discovery', 'Catalog', 'DriverInstall', 'RecipeEngine') {
-        Import-Module (Join-Path $root "windows\modules\$m.psm1") -Force -DisableNameChecking
+        Import-Module (Join-Path $root "windows\modules\$m.psm1") -Force -DisableNameChecking -Global
     }
     $fixtures = Join-Path $root 'tests\fixtures'
     $catalog = Read-PKJsonFile (Join-Path $fixtures 'drivers-esempio.json')

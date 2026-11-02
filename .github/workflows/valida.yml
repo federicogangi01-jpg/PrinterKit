@@ -20,4 +20,8 @@ jobs:
       - shell: powershell
         run: |
           Install-Module Pester -MinimumVersion 5.5 -Force -Scope CurrentUser -SkipPublisherCheck
-          Invoke-Pester -Path tests/pester -CI
+          $r = Invoke-Pester -Path tests/pester -PassThru -Output Detailed
+          # Ogni errore come annotazione: leggibile dalla pagina del workflow senza scaricare i log.
+          foreach ($t in $r.Failed) { Write-Output ("::error title={0}::{1}" -f $t.ExpandedPath, (($t.ErrorRecord | Out-String) -replace "`r?`n", ' | ')) }
+          foreach ($c in $r.FailedContainers + $r.FailedBlocks) { Write-Output ("::error title={0}::{1}" -f $c.Name, (($c.ErrorRecord | Out-String) -replace "`r?`n", ' | ')) }
+          if ($r.FailedCount -gt 0 -or $r.FailedBlocksCount -gt 0 -or $r.FailedContainersCount -gt 0) { exit 1 }
