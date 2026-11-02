@@ -9,9 +9,13 @@ if [[ ! "$URL" =~ '^https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)$' ]]
   exit 1
 fi
 REPO="${match[1]}/${match[2]}"
+if [[ "${match[1]}" == TUO-UTENTE || "${match[1]}" == UTENTE ]]; then
+  echo "Sostituisci TUO-UTENTE con il tuo nome utente GitHub."
+  exit 1
+fi
 
 # config.json: catalogo, ricette e "Segnala su GitHub" puntano al repository.
-sed -i '' "s#UTENTE/PrinterKit#$REPO#g" config.json
+sed -i '' -E "s#githubusercontent\.com/[^/]+/[^/]+/#githubusercontent.com/$REPO/#g; s#\"githubRepo\": \"[^\"]*\"#\"githubRepo\": \"$REPO\"#" config.json
 grep -q "$REPO" config.json || { echo "config.json non aggiornato"; exit 1; }
 git add config.json
 git diff --cached --quiet || git commit -q -m "Collega il kit al repository $REPO"
