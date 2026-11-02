@@ -101,7 +101,7 @@ function Invoke-PKHttp {
 
 function Get-PKRecipeValue {
     param([object]$Object, [string]$Name, [object]$Default = $null)
-    if ($Object -is [Collections.IDictionary]) { if ($Object.Contains($Name) -and $null -ne $Object[$Name]) { return $Object[$Name] } }
+    if ($Object -is [Collections.IDictionary]) { if ($Object.ContainsKey($Name) -and $null -ne $Object[$Name]) { return $Object[$Name] } }
     return $Default
 }
 

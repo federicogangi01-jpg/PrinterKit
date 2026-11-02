@@ -7,7 +7,7 @@ $script:WhqlSigners = @('Microsoft Windows Hardware Compatibility Publisher', 'M
 
 function Get-PKFieldValue {
     param([object]$Object, [string]$Name, [object]$Default = $null)
-    if ($Object -is [Collections.IDictionary]) { if ($Object.Contains($Name) -and $null -ne $Object[$Name]) { return $Object[$Name] }; return $Default }
+    if ($Object -is [Collections.IDictionary]) { if ($Object.ContainsKey($Name) -and $null -ne $Object[$Name]) { return $Object[$Name] }; return $Default }
     if ($null -ne $Object -and $Object.PSObject.Properties[$Name]) { $v = $Object.PSObject.Properties[$Name].Value; if ($null -ne $v) { return $v } }
     return $Default
 }
