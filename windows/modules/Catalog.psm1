@@ -62,13 +62,14 @@ function Test-PKCatalog {
     $okOs = @('windows', 'macos'); $okStatus = @('ok', 'link_rotto', 'da_verificare', 'nessun_driver')
     foreach ($m in $mans) {
         foreach ($f in @('id', 'name', 'match', 'officialDomains', 'signerNames', 'packages')) {
-            if ($null -eq (Get-PKField $m $f)) { [void]$err.Add("marca senza campo '$f'") }
+            # Presenza del campo, non del valore: "packages": [] è valido.
+            if (-not ($m -is [Collections.IDictionary]) -or -not $m.ContainsKey($f) -or $null -eq $m[$f]) { [void]$err.Add("marca senza campo '$f'") }
         }
         try { [void](New-Object Text.RegularExpressions.Regex((Get-PKField $m 'match' 'x'))) } catch { [void]$err.Add("regex match non valida per $(Get-PKField $m 'id')") }
         foreach ($p in @(Get-PKField $m 'packages' @())) {
             $pkgId = Get-PKField $p 'id' '?'
             foreach ($f in @('id', 'driverFamily', 'os', 'osMin', 'arch', 'models', 'sourcePage', 'fileType', 'status')) {
-                if ($null -eq (Get-PKField $p $f)) { [void]$err.Add("pacchetto $pkgId senza campo '$f'") }
+                if (-not $p.ContainsKey($f) -or $null -eq $p[$f]) { [void]$err.Add("pacchetto $pkgId senza campo '$f'") }
             }
             if ($okOs -notcontains (Get-PKField $p 'os')) { [void]$err.Add("pacchetto ${pkgId}: os non valido") }
             if ($okStatus -notcontains (Get-PKField $p 'status')) { [void]$err.Add("pacchetto ${pkgId}: status non valido") }
