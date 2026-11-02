@@ -1,8 +1,8 @@
 {
-  "catalogSource": "https://raw.githubusercontent.com/UTENTE/PrinterKit/main/catalogo/drivers.json",
-  "recipesSource": "https://raw.githubusercontent.com/UTENTE/PrinterKit/main/scanner-ricette/",
-  "nasRecipesSource": "https://raw.githubusercontent.com/UTENTE/PrinterKit/main/nas-ricette/",
-  "githubRepo": "UTENTE/PrinterKit",
+  "catalogSource": "https://raw.githubusercontent.com/federicogangi01-jpg/PrinterKit/main/catalogo/drivers.json",
+  "recipesSource": "https://raw.githubusercontent.com/federicogangi01-jpg/PrinterKit/main/scanner-ricette/",
+  "nasRecipesSource": "https://raw.githubusercontent.com/federicogangi01-jpg/PrinterKit/main/nas-ricette/",
+  "githubRepo": "federicogangi01-jpg/PrinterKit",
   "snmpCommunity": "public",
   "scanFolderDefault": "C:\\Scansioni",
   "scanShareName": "Scansioni",
