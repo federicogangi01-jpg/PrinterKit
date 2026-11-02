@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   PrinterKit - installazione stampanti di rete con soli driver ufficiali del produttore.
 .DESCRIPTION

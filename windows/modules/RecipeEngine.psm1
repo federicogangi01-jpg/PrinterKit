@@ -1,4 +1,4 @@
-# Motore delle "ricette" HTTP per multifunzione (§10.2) e NAS (§10.1.4). Compatibile con PowerShell 2.0.
+﻿# Motore delle "ricette" HTTP per multifunzione (§10.2) e NAS (§10.1.4). Compatibile con PowerShell 2.0.
 # Una ricetta è una sequenza di richieste HTTP con segnaposto {{nome}}, estrazione di token (CSRF)
 # con regex e controlli sull'esito. Le password non finiscono mai nel log.
 

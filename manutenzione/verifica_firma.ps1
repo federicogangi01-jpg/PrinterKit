@@ -1,4 +1,4 @@
-# Verifica Authenticode dei pacchetti Windows scaricati (job windows-latest, Windows PowerShell 5.1).
+﻿# Verifica Authenticode dei pacchetti Windows scaricati (job windows-latest, Windows PowerShell 5.1).
 # Usa le stesse regole dell'app (windows/modules/DriverInstall.psm1): firma valida del produttore o WHQL
 # con Provider dell'INF del produttore, e INF presenti per ogni architettura dichiarata.
 param([Parameter(Mandatory)][string]$Elenco, [Parameter(Mandatory)][string]$Cartella)

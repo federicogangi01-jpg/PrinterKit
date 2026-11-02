@@ -1,4 +1,4 @@
-# Catalogo driver: lettura, validazione, scelta del pacchetto, verifica dei link (§5, §7.3).
+﻿# Catalogo driver: lettura, validazione, scelta del pacchetto, verifica dei link (§5, §7.3).
 # Compatibile con PowerShell 2.0: il JSON si legge con JavaScriptSerializer (niente ConvertFrom-Json).
 
 $script:UserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36'

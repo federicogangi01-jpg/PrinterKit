@@ -1,4 +1,4 @@
-# Rilevamento sistema operativo, architettura e capacità (§6). Compatibile con PowerShell 2.0.
+﻿# Rilevamento sistema operativo, architettura e capacità (§6). Compatibile con PowerShell 2.0.
 
 function Get-PKArchitecture {
     # PROCESSOR_ARCHITEW6432 è valorizzata quando un processo a 32 bit gira su Windows a 64 bit.

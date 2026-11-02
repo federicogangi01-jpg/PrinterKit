@@ -1,4 +1,4 @@
-# Log di intervento (§9). Compatibile con PowerShell 2.0.
+﻿# Log di intervento (§9). Compatibile con PowerShell 2.0.
 
 $script:SessionLines = New-Object System.Collections.ArrayList
 $script:SessionFile = $null

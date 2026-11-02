@@ -27,7 +27,9 @@ jobs:
           $r = Invoke-Pester -Configuration $cfg
           # Ogni errore come annotazione, leggibile dalla pagina del workflow senza scaricare i log.
           [xml]$x = Get-Content pester.xml
-          foreach ($n in $x.SelectNodes('//test-case[@result="Failure"] | //test-suite[@result="Failure" and failure]')) {
+          # Prima gli errori di setup dei blocchi, poi i test (GitHub mostra al massimo 10 annotazioni per passo).
+          $nodes = @($x.SelectNodes('//test-suite[failure]')) + @($x.SelectNodes('//test-case[@result="Failure"]') | Where-Object { $_.failure.message -notmatch 'should run but it did not' })
+          foreach ($n in ($nodes | Select-Object -First 9)) {
             $m = ("$($n.failure.message) @ $($n.failure.'stack-trace')") -replace "`r?`n", ' | '
             Write-Output ("::error title={0}::{1}" -f $n.name, $m.Substring(0, [math]::Min(900, $m.Length)))
           }

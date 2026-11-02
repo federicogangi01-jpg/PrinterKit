@@ -1,4 +1,4 @@
-# Modulo scanner: cartella condivisa (PC, Server, NAS) + rubrica della multifunzione (§10).
+﻿# Modulo scanner: cartella condivisa (PC, Server, NAS) + rubrica della multifunzione (§10).
 # Compatibile con PowerShell 2.0 (sulle funzioni SMB moderne c'è il ripiego su net share / icacls).
 
 $script:FileSharingGroup = '@FirewallAPI.dll,-28502'   # "Condivisione file e stampanti", indipendente dalla lingua

@@ -1,4 +1,4 @@
-# Test unitari Pester 5 (eseguiti dal workflow "valida" su windows-latest).
+﻿# Test unitari Pester 5 (eseguiti dal workflow "valida" su windows-latest).
 BeforeAll {
     $root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
     foreach ($m in 'Log', 'SystemInfo', 'Discovery', 'Catalog', 'DriverInstall', 'RecipeEngine') {

@@ -1,4 +1,4 @@
-# Scansione rete, SNMP minimale (BER) e IPP (§7.1, §7.2). Compatibile con PowerShell 2.0
+﻿# Scansione rete, SNMP minimale (BER) e IPP (§7.1, §7.2). Compatibile con PowerShell 2.0
 # (niente -shl/-shr, niente ::new, niente [pscustomobject]).
 
 # ---------- Indirizzi IP ----------

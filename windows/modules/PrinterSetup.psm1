@@ -1,4 +1,4 @@
-# Porta di rete, coda di stampa, pagina di prova (§7.5). Compatibile con PowerShell 2.0.
+﻿# Porta di rete, coda di stampa, pagina di prova (§7.5). Compatibile con PowerShell 2.0.
 # Nessuna azione distruttiva: porte e stampanti esistenti non vengono mai modificate o rimosse.
 
 function Get-PKExistingPrinterByIP {

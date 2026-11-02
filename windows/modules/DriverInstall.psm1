@@ -1,4 +1,4 @@
-# Download, verifica di ufficialità, estrazione e installazione del driver (§2, §7.4).
+﻿# Download, verifica di ufficialità, estrazione e installazione del driver (§2, §7.4).
 # Compatibile con PowerShell 2.0.
 
 $script:UserAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36'
