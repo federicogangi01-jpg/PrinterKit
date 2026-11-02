@@ -22,6 +22,10 @@ jobs:
           Install-Module Pester -MinimumVersion 5.5 -Force -Scope CurrentUser -SkipPublisherCheck
           $r = Invoke-Pester -Path tests/pester -PassThru -Output Detailed
           # Ogni errore come annotazione: leggibile dalla pagina del workflow senza scaricare i log.
-          foreach ($t in $r.Failed) { Write-Output ("::error title={0}::{1}" -f $t.ExpandedPath, (($t.ErrorRecord | Out-String) -replace "`r?`n", ' | ')) }
+          Write-Output ("Test: {0} passati, {1} falliti, blocchi falliti {2}" -f $r.PassedCount, $r.FailedCount, $r.FailedBlocksCount)
+          foreach ($t in @($r.Tests | Where-Object { $_.Result -ne 'Passed' -and $_.Result -ne 'Skipped' })) {
+            $msg = (@($t.ErrorRecord | ForEach-Object { $_.Exception.Message + ' @ ' + $_.ScriptStackTrace }) -join ' / ') -replace "`r?`n", ' | '
+            Write-Output ("::error title={0}::{1}" -f $t.ExpandedPath, $msg.Substring(0, [math]::Min(900, $msg.Length)))
+          }
           foreach ($c in $r.FailedContainers + $r.FailedBlocks) { Write-Output ("::error title={0}::{1}" -f $c.Name, (($c.ErrorRecord | Out-String) -replace "`r?`n", ' | ')) }
           if ($r.FailedCount -gt 0 -or $r.FailedBlocksCount -gt 0 -or $r.FailedContainersCount -gt 0) { exit 1 }

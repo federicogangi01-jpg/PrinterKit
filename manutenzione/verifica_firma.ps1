@@ -30,7 +30,7 @@ foreach ($s in @($scaricati)) {
         }
         $infs = @(); $trovate = @()
         foreach ($a in @($p.arch)) {
-            $x = @(Find-PKPrinterInfs -Directory $dest -Arch $a)
+            $x = Find-PKPrinterInfs -Directory $dest -Arch $a
             if ($x.Count -gt 0) { $trovate += $a; $infs += $x }
         }
         $r.arch = $trovate

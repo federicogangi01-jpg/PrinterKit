@@ -272,7 +272,7 @@ function Invoke-PKScannerSetup {
 
     $hostIP = $null; $sharePath = $shareName; $unc = $null; $localRoot = $null; $acct = $null; $pw = $null; $domain = ''
     if ($dest.Kind -eq 'pc') {
-        $local = @(Get-PKLocalAddresses)
+        $local = Get-PKLocalAddresses
         # IP del PC sulla stessa rete della multifunzione.
         $prefix = [string]::Join('.', $Row.IP.Split('.')[0..2])
         $hostIP = ($local | Where-Object { $_.IP.StartsWith($prefix + '.') } | Select-Object -First 1).IP
@@ -402,7 +402,7 @@ if ($PrepareCache) {
                 $ext = Join-Path $work 'estratto'
                 [void](Expand-PKDriverPackage -File $src.Path -Destination $ext -Package $p -KitRoot $KitRoot)
                 $infs = @()
-                foreach ($a in @(Get-PKField $p 'arch' @())) { $infs += @(Find-PKPrinterInfs -Directory $ext -Arch $a) }
+                foreach ($a in @(Get-PKField $p 'arch' @())) { $infs += Find-PKPrinterInfs -Directory $ext -Arch $a }
                 $auth = Test-PKPackageAuthenticity -PackageFile $src.Path -ExtractedDir $ext -Manufacturer $m -Infs ([string[]]($infs | Select-Object -Unique))
                 if (-not $auth.Ok) { throw $auth.Message }
                 Save-PKToCache -File $src.Path -KitRoot $KitRoot -ManufacturerId $manId -PackageId $pkgId -Sha256 $src.Sha256 -Signer $auth.Signer -Url $src.Url

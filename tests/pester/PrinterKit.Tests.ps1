@@ -40,7 +40,7 @@ Describe 'SNMP (BER)' {
         $v[0].Value | Should -Be 'ECOSYS M2540dn'
     }
     It 'gestisce lunghezze lunghe (0x81)' { (ConvertTo-PKBerLength 200) | Should -Be @(0x81, 200) }
-    It 'traduce i linguaggi della stampante' { ConvertTo-PKLanguages @(47, 6, 3) | Should -Be @('pcl6', 'ps', 'pcl5') }
+    It 'traduce i linguaggi della stampante' { (ConvertTo-PKLanguages @(47, 6, 3)) | Should -Be @('pcl6', 'ps', 'pcl5') }
 }
 
 Describe 'Parser INF' {
@@ -50,7 +50,7 @@ Describe 'Parser INF' {
         $n | Should -Contain 'Kyocera Classic Universaldriver PCL6'
         $n | Should -Contain 'Kyocera TASKalfa 2553ci KX'
     }
-    It 'legge i modelli non decorati per x86' { Get-PKInfModelNames (Join-Path $fixtures 'inf\32bit\OEMSETUP.INF') 'x86' | Should -Be @('Kyocera ECOSYS M2540dn KX (32)') }
+    It 'legge i modelli non decorati per x86' { (Get-PKInfModelNames (Join-Path $fixtures 'inf\32bit\OEMSETUP.INF') 'x86') | Should -Be @('Kyocera ECOSYS M2540dn KX (32)') }
     It 'scarta gli INF non di stampante e le cartelle dell''altra architettura' {
         $f = Find-PKPrinterInfs (Join-Path $fixtures 'inf') 'x64'
         $f.Count | Should -Be 1
