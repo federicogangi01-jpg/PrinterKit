@@ -54,6 +54,10 @@ SCHEMA_RISPOSTA = {
 OS_MIN = {"windows-xp": "5.1", "windows-7": "6.1", "windows-8.1": "6.3", "windows-10": "10.0", "windows-11": "10.0"}
 
 
+class QuotaEsaurita(Exception):
+    """Quota del piano gratuito finita: le pagine restanti passano alla prossima esecuzione."""
+
+
 def errore(msg):
     """Messaggio visibile anche come annotazione sulla pagina del workflow."""
     print(("::error::" if os.environ.get("GITHUB_ACTIONS") else "ERRORE: ") + msg)
@@ -70,7 +74,7 @@ def chiedi_gemini(prompt, chiave, modello, temperatura=0.1, apri=urllib.request.
     # 429 (limite al minuto) e 5xx (modello sovraccarico) sono temporanei: nuovi tentativi con attese crescenti.
     for tentativo, pausa in enumerate(list(attese) + [None]):
         try:
-            with apri(req, timeout=120) as r:
+            with apri(req, timeout=180) as r:
                 risposta = json.loads(r.read().decode())
             break
         except urllib.error.HTTPError as e:
@@ -80,6 +84,8 @@ def chiedi_gemini(prompt, chiave, modello, temperatura=0.1, apri=urllib.request.
                 print(f"Gemini HTTP {e.code}, nuovo tentativo tra {pausa} s")
                 time.sleep(pausa)
                 continue
+            if e.code == 429 and "quota" in dettaglio.lower():
+                raise QuotaEsaurita(f"quota Gemini esaurita: {dettaglio}") from None
             raise RuntimeError(f"HTTP {e.code} da Gemini: {dettaglio}") from None
     testo = risposta["candidates"][0]["content"]["parts"][0]["text"]
     return json.loads(testo)
@@ -98,7 +104,7 @@ Regole obbligatorie:
 - Solo driver di stampa del produttore (niente utility, firmware, manuali, driver scanner, driver generici Microsoft/Apple).
 - Indica os ("windows"/"macos"), osMin (versione NT: 5.1 XP, 6.1 Windows 7, 10.0 Windows 10/11; oppure versione macOS), arch, linguaggio e tipo file.
 - Se non trovi nulla di adatto, restituisci "pacchetti": [].
-Testo della pagina (estratto): {testo[:6000]}
+Testo della pagina (estratto): {testo[:2500]}
 Link presenti nella pagina:
 {elenco}
 """
@@ -186,6 +192,8 @@ def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, s
         cercato = {k: vecchio.get(k) for k in ("driverFamily", "version", "os", "osMin", "arch", "language", "fileType")}
     try:
         risposta = gemini(costruisci_prompt(m, voce, link, testo, cercato), chiave, modello)
+    except QuotaEsaurita:
+        raise
     except Exception as e:
         scartati.append({"voce": voce, "motivo": f"Gemini non ha risposto: {e}"})
         if sum(1 for x in scartati if x["motivo"].startswith("Gemini non ha risposto")) <= 3:
@@ -249,6 +257,10 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
             time.sleep(a.attesa)  # limiti al minuto del piano gratuito
         try:
             elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, scartati)
+        except QuotaEsaurita as e:
+            errore(f"{e} – le pagine restanti passano alla prossima esecuzione")
+            rinviati = [(mm, vv, pp) for mm, vv, pp in lavori[i:]] + rinviati
+            break
         except Exception as e:  # una pagina non deve fermare le altre
             import traceback
             dettaglio = traceback.format_exc().strip().splitlines()[-3:]

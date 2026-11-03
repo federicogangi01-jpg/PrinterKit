@@ -124,10 +124,16 @@ def apri_pagina(url, serve_browser=False, timeout=60):
             serve_browser = False
     if serve_browser:
         with sync_playwright() as pw:
-            br = pw.chromium.launch()
-            pg = br.new_page(user_agent=USER_AGENT)
-            pg.goto(url, wait_until="networkidle", timeout=timeout * 1000)
-            time.sleep(2)
+            # Alcuni siti (HP) danno errori HTTP/2 al browser headless; "networkidle" non arriva mai
+            # sulle pagine con traffico continuo (Xerox): si attende il DOM e poi qualche secondo.
+            br = pw.chromium.launch(args=["--disable-http2"])
+            pg = br.new_page(user_agent=USER_AGENT, locale="it-IT")
+            pg.goto(url, wait_until="domcontentloaded", timeout=timeout * 1000)
+            try:
+                pg.wait_for_load_state("networkidle", timeout=15000)
+            except Exception:
+                pass
+            time.sleep(3)
             contenuto, finale = pg.content(), pg.url
             br.close()
             return contenuto, finale
