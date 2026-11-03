@@ -192,6 +192,37 @@ class TestRecuperoLinkConGeminiSimulato(unittest.TestCase):
         self.assertEqual(c, [])
 
 
+class TestGeminiTentativi(unittest.TestCase):
+    def test_riprova_su_503_poi_risponde(self):
+        import urllib.error
+        chiamate = []
+
+        class Risposta(io.BytesIO):
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+
+        def apri(req, timeout=0):
+            chiamate.append(req.full_url)
+            self.assertNotIn("key=", req.full_url, "la chiave va nell'header, non nell'URL")
+            if len(chiamate) < 3:
+                raise urllib.error.HTTPError(req.full_url, 503, "busy", {}, io.BytesIO(b'{"error":"busy"}'))
+            corpo = {"candidates": [{"content": {"parts": [{"text": '{"pacchetti": []}'}]}}]}
+            return Risposta(json.dumps(corpo).encode())
+        r = recupero_link.chiedi_gemini("p", "k", "m", apri=apri, attese=(0, 0, 0))
+        self.assertEqual(r, {"pacchetti": []})
+        self.assertEqual(len(chiamate), 3)
+
+    def test_errore_definitivo_non_riprova(self):
+        import urllib.error
+        n = []
+        def apri(req, timeout=0):
+            n.append(1)
+            raise urllib.error.HTTPError(req.full_url, 404, "no", {}, io.BytesIO(b'{"error":"modello"}'))
+        with self.assertRaises(RuntimeError):
+            recupero_link.chiedi_gemini("p", "k", "m", apri=apri, attese=(0, 0))
+        self.assertEqual(len(n), 1)
+
+
 class TestApplicaRisultati(unittest.TestCase):
     def test_solo_firme_valide_entrano(self):
         tmp = tempfile.mkdtemp()

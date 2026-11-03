@@ -59,7 +59,7 @@ def errore(msg):
     print(("::error::" if os.environ.get("GITHUB_ACTIONS") else "ERRORE: ") + msg)
 
 
-def chiedi_gemini(prompt, chiave, modello, temperatura=0.1, apri=urllib.request.urlopen):
+def chiedi_gemini(prompt, chiave, modello, temperatura=0.1, apri=urllib.request.urlopen, attese=(15, 45, 120)):
     corpo = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": temperatura, "responseMimeType": "application/json",
@@ -67,13 +67,20 @@ def chiedi_gemini(prompt, chiave, modello, temperatura=0.1, apri=urllib.request.
     }
     req = urllib.request.Request(API.format(model=modello), data=json.dumps(corpo).encode(),
                                  headers={"Content-Type": "application/json", "x-goog-api-key": chiave})
-    try:
-        with apri(req, timeout=120) as r:
-            risposta = json.loads(r.read().decode())
-    except urllib.error.HTTPError as e:
-        # Il corpo spiega il motivo (quota, modello inesistente, chiave non valida); la chiave è nell'header, non qui.
-        dettaglio = e.read().decode(errors="replace")[:300].replace("\n", " ")
-        raise RuntimeError(f"HTTP {e.code} da Gemini: {dettaglio}") from None
+    # 429 (limite al minuto) e 5xx (modello sovraccarico) sono temporanei: nuovi tentativi con attese crescenti.
+    for tentativo, pausa in enumerate(list(attese) + [None]):
+        try:
+            with apri(req, timeout=120) as r:
+                risposta = json.loads(r.read().decode())
+            break
+        except urllib.error.HTTPError as e:
+            # Il corpo spiega il motivo (quota, modello inesistente, chiave non valida); la chiave è nell'header, non qui.
+            dettaglio = e.read().decode(errors="replace")[:300].replace("\n", " ")
+            if pausa is not None and (e.code == 429 or e.code >= 500):
+                print(f"Gemini HTTP {e.code}, nuovo tentativo tra {pausa} s")
+                time.sleep(pausa)
+                continue
+            raise RuntimeError(f"HTTP {e.code} da Gemini: {dettaglio}") from None
     testo = risposta["candidates"][0]["content"]["parts"][0]["text"]
     return json.loads(testo)
 
