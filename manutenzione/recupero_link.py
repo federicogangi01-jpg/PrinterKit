@@ -16,6 +16,7 @@ import re
 import subprocess
 import sys
 import time
+import urllib.error
 import urllib.request
 
 from comune import CATALOGO, PAGINE, dominio_ufficiale, leggi_json, produttore, scrivi_json
@@ -66,8 +67,13 @@ def chiedi_gemini(prompt, chiave, modello, temperatura=0.1, apri=urllib.request.
     }
     req = urllib.request.Request(API.format(model=modello), data=json.dumps(corpo).encode(),
                                  headers={"Content-Type": "application/json", "x-goog-api-key": chiave})
-    with apri(req, timeout=120) as r:
-        risposta = json.loads(r.read().decode())
+    try:
+        with apri(req, timeout=120) as r:
+            risposta = json.loads(r.read().decode())
+    except urllib.error.HTTPError as e:
+        # Il corpo spiega il motivo (quota, modello inesistente, chiave non valida); la chiave è nell'header, non qui.
+        dettaglio = e.read().decode(errors="replace")[:300].replace("\n", " ")
+        raise RuntimeError(f"HTTP {e.code} da Gemini: {dettaglio}") from None
     testo = risposta["candidates"][0]["content"]["parts"][0]["text"]
     return json.loads(testo)
 
@@ -180,9 +186,9 @@ def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, s
         return
     trovati = 0
     for p in (risposta.get("pacchetti") or []):
-        errore = valida_proposta(p, link, m, None if vecchio else voce)
-        if errore:
-            scartati.append({"voce": voce, "proposta": p, "motivo": errore})
+        problema = valida_proposta(p, link, m, None if vecchio else voce)
+        if problema:
+            scartati.append({"voce": voce, "proposta": p, "motivo": problema})
             continue
         if vecchio and (p["os"] != vecchio["os"] or not set(vecchio["arch"]) <= set(p["arch"])):
             scartati.append({"voce": voce, "proposta": p, "motivo": "non corrisponde al pacchetto da sostituire"})

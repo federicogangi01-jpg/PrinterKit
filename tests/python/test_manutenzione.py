@@ -166,6 +166,24 @@ class TestRecuperoLinkConGeminiSimulato(unittest.TestCase):
         self.assertEqual(c, [])
         self.assertIn("architettura", s[0]["motivo"])
 
+    def test_errore_di_gemini_registrato(self):
+        def gemini(prompt, chiave, modello):
+            raise RuntimeError("HTTP 429 quota superata")
+        pag = os.path.join(self.tmp, "pagine.json")
+        comune.scrivi_json(pag, {"schemaVersion": 1, "pagine": [{
+            "manufacturer": "kyocera", "scope": "universale", "series": None, "os": ["windows-10"], "arch": ["x64"],
+            "pageUrl": "https://www.kyoceradocumentsolutions.eu/x.html", "needsBrowser": False, "notes": None,
+            "stato": "ok", "verificatoIl": None}]})
+        orig = recupero_link.CATALOGO, recupero_link.PAGINE
+        recupero_link.CATALOGO, recupero_link.PAGINE = ESEMPIO, pag
+        try:
+            recupero_link.main(["--popola", "--out", self.tmp, "--attesa", "0"], gemini=gemini,
+                               apri_pagina=lambda u, b=False: (PAGINA, "https://www.kyoceradocumentsolutions.eu/x.html"))
+        finally:
+            recupero_link.CATALOGO, recupero_link.PAGINE = orig
+        s = comune.leggi_json(os.path.join(self.tmp, "scartati.json"))
+        self.assertIn("429", s[0]["motivo"])
+
     def test_risposta_vuota_o_errata(self):
         c, s = self.esegui({"pacchetti": []})
         self.assertEqual(c, [])
