@@ -40,7 +40,11 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           MODO="${{ github.event.inputs.modo }}"
-          [ -z "$MODO" ] && MODO=nuove
+          # Da un commit: "[popola]" nel messaggio avvia il popolamento completo (non serve un token per lanciarlo).
+          if [ -z "$MODO" ]; then
+            if [ "${{ contains(github.event.head_commit.message, '[popola]') }}" = "true" ]; then MODO=popola; else MODO=nuove; fi
+          fi
+          echo "Modalità: $MODO"
           python manutenzione/recupero_link.py --$MODO
       - id: n
         run: echo "candidati=$(python -c 'import json;print(len(json.load(open("manutenzione/out/candidati.json"))))')" >> "$GITHUB_OUTPUT"
