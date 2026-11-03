@@ -7,7 +7,7 @@
    `catalogSource`, `recipesSource`, `nasRecipesSource`, `githubRepo`.
 3. **Gemini**: creare una chiave gratuita su Google AI Studio e salvarla in
    *Settings → Secrets and variables → Actions → New repository secret* con nome `GEMINI_API_KEY`.
-   Facoltative, in *Variables*: `GEMINI_MODEL` (predefinito `gemini-2.5-flash`), `PK_MAX_PAGINE`
+   Facoltative, in *Variables*: `GEMINI_MODEL` (predefinito `gemini-3.8-flash`), `PK_MAX_PAGINE`
    (pagine per esecuzione, predefinito 20), `PK_ATTESA_SEC` (attesa tra le richieste, predefinito 7).
 4. **Permessi Actions**: *Settings → Actions → General → Workflow permissions*: "Read and write" e
    "Allow GitHub Actions to create and approve pull requests".

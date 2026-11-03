@@ -227,7 +227,7 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
     a = ap.parse_args(argv)
     modo = "rotti" if a.rotti else "popola" if a.popola else "nuove"
     chiave = os.environ.get("GEMINI_API_KEY", "")
-    modello = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    modello = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
     if not chiave:
         errore("GEMINI_API_KEY mancante: va in Settings → Secrets and variables → Actions → "
                "scheda 'Secrets' → 'Repository secrets' (non Environment, Codespaces o Dependabot), con questo nome esatto")
