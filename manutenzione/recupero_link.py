@@ -150,6 +150,65 @@ def obiettivi(modo, cat, pagine, rif_git="HEAD~1"):
     return out
 
 
+def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, scartati):
+    """Una pagina: apre, estrae i link, chiede a Gemini, valida le proposte."""
+    try:
+        html, finale = apri_pagina(voce["pageUrl"], voce.get("needsBrowser", False))
+    except Exception as e:
+        scartati.append({"voce": voce, "motivo": f"pagina non raggiungibile: {e}"})
+        return
+    if rete.sembra_captcha(html):
+        scartati.append({"voce": voce, "motivo": "il sito blocca l'accesso automatico (CAPTCHA): nessun aggiramento"})
+        return
+    link, testo = rete.estrai_link(html, finale)
+    link = [l for l in link if dominio_ufficiale(l["url"], m["officialDomains"])]
+    # Prima i link che sembrano file, poi gli altri (limite per non superare il contesto).
+    link.sort(key=lambda l: 0 if l["url"].lower().split("?")[0].endswith(ESTENSIONI) else 1)
+    link = link[:400]
+    if not link:
+        scartati.append({"voce": voce, "motivo": "nessun link ufficiale nella pagina (forse serve il browser)"})
+        return
+    cercato = None
+    if vecchio:
+        cercato = {k: vecchio.get(k) for k in ("driverFamily", "version", "os", "osMin", "arch", "language", "fileType")}
+    try:
+        risposta = gemini(costruisci_prompt(m, voce, link, testo, cercato), chiave, modello)
+    except Exception as e:
+        scartati.append({"voce": voce, "motivo": f"Gemini non ha risposto: {e}"})
+        if sum(1 for x in scartati if x["motivo"].startswith("Gemini non ha risposto")) <= 3:
+            errore(f"Gemini non ha risposto per {voce['pageUrl']}: {e}")
+        return
+    trovati = 0
+    for p in (risposta.get("pacchetti") or []):
+        errore = valida_proposta(p, link, m, None if vecchio else voce)
+        if errore:
+            scartati.append({"voce": voce, "proposta": p, "motivo": errore})
+            continue
+        if vecchio and (p["os"] != vecchio["os"] or not set(vecchio["arch"]) <= set(p["arch"])):
+            scartati.append({"voce": voce, "proposta": p, "motivo": "non corrisponde al pacchetto da sostituire"})
+            continue
+        candidati.append({
+            "manufacturer": m["id"], "sostituisce": vecchio["id"] if vecchio else None,
+            "package": {
+                "id": vecchio["id"] if vecchio else id_pacchetto(m["id"], p),
+                "driverFamily": p["driverFamily"], "version": p.get("version") or None, "os": p["os"],
+                "osMin": p["osMin"], "osMax": p.get("osMax") or None, "buildMin": None, "arch": p["arch"],
+                "language": p.get("language"), "models": vecchio["models"] if vecchio else "*",
+                "url": p["url"], "sourcePage": voce["pageUrl"], "sha256": None, "fileType": p["fileType"],
+                "extractArgs": vecchio.get("extractArgs") if vecchio else None, "infHint": None,
+                "driverName": vecchio.get("driverName") if vecchio else None, "lastChecked": None,
+                "status": "da_verificare", "notes": "proposto da Gemini: " + (p.get("motivazione") or "")[:200],
+            },
+            "signerNames": m["signerNames"], "macSignerNames": m.get("macSignerNames", m["signerNames"]),
+            "officialDomains": m["officialDomains"], "match": m["match"],
+        })
+        trovati += 1
+    if not trovati and vecchio is None and not any(s.get("voce") is voce for s in scartati):
+        scartati.append({"voce": voce, "motivo": "Gemini non ha trovato pacchetti adatti nella pagina"})
+    if vecchio and not trovati:
+        scartati.append({"voce": voce, "pacchetto": vecchio["id"], "motivo": "nessun sostituto valido"})
+
+
 def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
     ap = argparse.ArgumentParser()
     g = ap.add_mutually_exclusive_group(required=True)
@@ -176,60 +235,12 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
         if i:
             time.sleep(a.attesa)  # limiti al minuto del piano gratuito
         try:
-            html, finale = apri_pagina(voce["pageUrl"], voce.get("needsBrowser", False))
-        except Exception as e:
-            scartati.append({"voce": voce, "motivo": f"pagina non raggiungibile: {e}"})
-            continue
-        if rete.sembra_captcha(html):
-            scartati.append({"voce": voce, "motivo": "il sito blocca l'accesso automatico (CAPTCHA): nessun aggiramento"})
-            continue
-        link, testo = rete.estrai_link(html, finale)
-        link = [l for l in link if dominio_ufficiale(l["url"], m["officialDomains"])]
-        # Prima i link che sembrano file, poi gli altri (limite per non superare il contesto).
-        link.sort(key=lambda l: 0 if l["url"].lower().split("?")[0].endswith(ESTENSIONI) else 1)
-        link = link[:400]
-        if not link:
-            scartati.append({"voce": voce, "motivo": "nessun link ufficiale nella pagina (forse serve il browser)"})
-            continue
-        cercato = None
-        if vecchio:
-            cercato = {k: vecchio.get(k) for k in ("driverFamily", "version", "os", "osMin", "arch", "language", "fileType")}
-        try:
-            risposta = gemini(costruisci_prompt(m, voce, link, testo, cercato), chiave, modello)
-        except Exception as e:
-            scartati.append({"voce": voce, "motivo": f"Gemini non ha risposto: {e}"})
-            if sum(1 for x in scartati if x["motivo"].startswith("Gemini non ha risposto")) <= 3:
-                errore(f"Gemini non ha risposto per {voce['pageUrl']}: {e}")
-            continue
-        trovati = 0
-        for p in (risposta.get("pacchetti") or []):
-            errore = valida_proposta(p, link, m, None if vecchio else voce)
-            if errore:
-                scartati.append({"voce": voce, "proposta": p, "motivo": errore})
-                continue
-            if vecchio and (p["os"] != vecchio["os"] or not set(vecchio["arch"]) <= set(p["arch"])):
-                scartati.append({"voce": voce, "proposta": p, "motivo": "non corrisponde al pacchetto da sostituire"})
-                continue
-            candidati.append({
-                "manufacturer": m["id"], "sostituisce": vecchio["id"] if vecchio else None,
-                "package": {
-                    "id": vecchio["id"] if vecchio else id_pacchetto(m["id"], p),
-                    "driverFamily": p["driverFamily"], "version": p.get("version") or None, "os": p["os"],
-                    "osMin": p["osMin"], "osMax": p.get("osMax") or None, "buildMin": None, "arch": p["arch"],
-                    "language": p.get("language"), "models": vecchio["models"] if vecchio else "*",
-                    "url": p["url"], "sourcePage": voce["pageUrl"], "sha256": None, "fileType": p["fileType"],
-                    "extractArgs": vecchio.get("extractArgs") if vecchio else None, "infHint": None,
-                    "driverName": vecchio.get("driverName") if vecchio else None, "lastChecked": None,
-                    "status": "da_verificare", "notes": "proposto da Gemini: " + (p.get("motivazione") or "")[:200],
-                },
-                "signerNames": m["signerNames"], "macSignerNames": m.get("macSignerNames", m["signerNames"]),
-                "officialDomains": m["officialDomains"], "match": m["match"],
-            })
-            trovati += 1
-        if not trovati and vecchio is None and not any(s.get("voce") is voce for s in scartati):
-            scartati.append({"voce": voce, "motivo": "Gemini non ha trovato pacchetti adatti nella pagina"})
-        if vecchio and not trovati:
-            scartati.append({"voce": voce, "pacchetto": vecchio["id"], "motivo": "nessun sostituto valido"})
+            elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, scartati)
+        except Exception as e:  # una pagina non deve fermare le altre
+            import traceback
+            dettaglio = traceback.format_exc().strip().splitlines()[-3:]
+            scartati.append({"voce": voce, "motivo": f"errore imprevisto: {e}"})
+            errore(f"errore imprevisto su {voce['pageUrl']}: {' | '.join(dettaglio)}")
     os.makedirs(a.out, exist_ok=True)
     scrivi_json(os.path.join(a.out, "candidati.json"), candidati)
     scrivi_json(os.path.join(a.out, "scartati.json"), scartati)
