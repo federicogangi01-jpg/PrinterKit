@@ -53,6 +53,11 @@ SCHEMA_RISPOSTA = {
 OS_MIN = {"windows-xp": "5.1", "windows-7": "6.1", "windows-8.1": "6.3", "windows-10": "10.0", "windows-11": "10.0"}
 
 
+def errore(msg):
+    """Messaggio visibile anche come annotazione sulla pagina del workflow."""
+    print(("::error::" if os.environ.get("GITHUB_ACTIONS") else "ERRORE: ") + msg)
+
+
 def chiedi_gemini(prompt, chiave, modello, temperatura=0.1, apri=urllib.request.urlopen):
     corpo = {
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
@@ -159,7 +164,8 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
     chiave = os.environ.get("GEMINI_API_KEY", "")
     modello = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
     if not chiave:
-        print("GEMINI_API_KEY mancante (va nei Secrets del repository)")
+        errore("GEMINI_API_KEY mancante: va in Settings → Secrets and variables → Actions → "
+               "scheda 'Secrets' → 'Repository secrets' (non Environment, Codespaces o Dependabot), con questo nome esatto")
         return 2
     cat, pagine = leggi_json(CATALOGO), leggi_json(PAGINE)
     lavori = obiettivi(modo, cat, pagine)
@@ -192,6 +198,8 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
             risposta = gemini(costruisci_prompt(m, voce, link, testo, cercato), chiave, modello)
         except Exception as e:
             scartati.append({"voce": voce, "motivo": f"Gemini non ha risposto: {e}"})
+            if sum(1 for x in scartati if x["motivo"].startswith("Gemini non ha risposto")) <= 3:
+                errore(f"Gemini non ha risposto per {voce['pageUrl']}: {e}")
             continue
         trovati = 0
         for p in (risposta.get("pacchetti") or []):
@@ -226,7 +234,8 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
     scrivi_json(os.path.join(a.out, "candidati.json"), candidati)
     scrivi_json(os.path.join(a.out, "scartati.json"), scartati)
     scrivi_json(os.path.join(a.out, "rinviati.json"), [{"pageUrl": v["pageUrl"], "manufacturer": mm["id"]} for mm, v, _ in rinviati])
-    print(f"{len(candidati)} candidati, {len(scartati)} scartati, {len(rinviati)} rinviati alla prossima esecuzione")
+    riepilogo = f"{len(candidati)} candidati, {len(scartati)} scartati, {len(rinviati)} rinviati alla prossima esecuzione"
+    print(("::notice::" if os.environ.get("GITHUB_ACTIONS") else "") + riepilogo)
     return 0
 
 
