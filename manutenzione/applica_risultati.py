@@ -36,14 +36,14 @@ def esiti(elenco, cart_win, cart_mac):
         elif v is None:
             out.append((voce, False, "esito della verifica di firma mancante", None, None, None))
         else:
-            out.append((voce, bool(v["ok"]), v.get("motivo", ""), s.get("sha256"), v.get("firma"), v.get("arch")))
+            out.append((voce, bool(v["ok"]), v.get("motivo", ""), s.get("sha256"), v.get("firma"), v))
     return out
 
 
 def applica_cambiati(cat, elenco, risultati):
     oggi = datetime.date.today().isoformat()
     problemi = []
-    for voce, ok, motivo, sha, firma, arch in risultati:
+    for voce, ok, motivo, sha, firma, esito in risultati:
         m = produttore(cat, voce["manufacturer"])
         p = next(x for x in m["packages"] if x["id"] == voce["package"])
         if ok:
@@ -58,7 +58,7 @@ def applica_cambiati(cat, elenco, risultati):
 def applica_candidati(cat, elenco, risultati):
     oggi = datetime.date.today().isoformat()
     aggiunti, problemi = [], []
-    for voce, ok, motivo, sha, firma, arch in risultati:
+    for voce, ok, motivo, sha, firma, esito in risultati:
         m = produttore(cat, voce["manufacturer"])
         nuovo = dict(voce["package"])
         if not ok:
@@ -69,8 +69,16 @@ def applica_candidati(cat, elenco, risultati):
                         p["status"] = "da_verificare"
                         p["notes"] = f"{oggi}: sostituto proposto non valido ({motivo})"[:300]
             continue
-        if arch and nuovo["os"] == "windows":
-            nuovo["arch"] = [a for a in ("x86", "x64", "arm64") if a in arch]  # dagli INF del pacchetto
+        ver_inf = esito if isinstance(esito, dict) else {}
+        if ver_inf.get("arch") and nuovo["os"] == "windows":
+            nuovo["arch"] = [a for a in ("x86", "x64", "arm64") if a in ver_inf["arch"]]  # dagli INF del pacchetto
+        # Nome, versione e linguaggio dall'INF valgono più di quelli ricavati dal link.
+        if ver_inf.get("famiglia"):
+            nuovo["driverFamily"] = ver_inf["famiglia"][:80]
+        if ver_inf.get("versione"):
+            nuovo["version"] = ver_inf["versione"]
+        if ver_inf.get("linguaggio"):
+            nuovo["language"] = ver_inf["linguaggio"]
         nuovo.update({"sha256": sha, "status": "ok", "lastChecked": oggi,
                       "notes": (nuovo.get("notes") or "") + f" | firma: {firma}"})
         idx = next((k for k, p in enumerate(m["packages"]) if p["id"] == nuovo["id"]), None)

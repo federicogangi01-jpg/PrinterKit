@@ -11,7 +11,7 @@ $scaricati = Get-Content -LiteralPath (Join-Path $Cartella 'scaricati.json') -Ra
 $seven = 'C:\Program Files\7-Zip\7z.exe'
 $out = @()
 foreach ($s in @($scaricati)) {
-    $r = [ordered]@{ indice = $s.indice; ok = $false; firma = ''; sha256 = $s.sha256; motivo = $s.errore; arch = @() }
+    $r = [ordered]@{ indice = $s.indice; ok = $false; firma = ''; sha256 = $s.sha256; motivo = $s.errore; arch = @(); famiglia = $null; versione = $null; linguaggio = $null; modelli = 0 }
     if ($s.errore) { $out += $r; continue }
     $v = @($voci)[$s.indice]
     $p = $v; if ($v.package -is [psobject]) { $p = $v.package }
@@ -39,6 +39,17 @@ foreach ($s in @($scaricati)) {
         $auth = Test-PKPackageAuthenticity -PackageFile $file -ExtractedDir $dest -Manufacturer $man -Infs ([string[]]($infs | Select-Object -Unique))
         if (-not $auth.Ok) { throw $auth.Message }
         $r.ok = $true; $r.firma = $auth.Signer; $r.motivo = 'firma valida'
+        # Dati leggibili presi dall'INF: nome del driver, versione (DriverVer) e linguaggio.
+        $inf = @($infs)[0]
+        $nomi = @(Get-PKInfModelNames $inf $trovate[0])
+        $ver = $null
+        $sez = (Read-PKInf $inf).Sections
+        if ($sez.ContainsKey('version')) { foreach ($l in $sez['version']) { if ($l -match '^\s*DriverVer\s*=\s*[^,]*,\s*([0-9.]+)') { $ver = $matches[1] } } }
+        $tutti = ($nomi -join ' ')
+        $lingua = $null
+        if ($tutti -match 'PCL\s?6|PCL\s?XL|PCLXL') { $lingua = 'pcl6' } elseif ($tutti -match '\bPS\b|PostScript|KPDL|BR-Script') { $lingua = 'ps' } elseif ($tutti -match 'PCL\s?5') { $lingua = 'pcl5' }
+        $r.famiglia = (@($nomi | Sort-Object Length) | Select-Object -First 1)
+        $r.versione = $ver; $r.linguaggio = $lingua; $r.modelli = $nomi.Count
     } catch { $r.motivo = $_.Exception.Message }
     Write-Host ('{0}: {1}' -f $s.file, $r.motivo)
     $out += $r
