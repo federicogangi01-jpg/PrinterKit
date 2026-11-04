@@ -22,6 +22,15 @@
   `"validata": true` e `"collaudo": "<modello> firmware <x>"`.
 - Workflow `controllo-link` e `recupero-link`: caricati e validi, ma non ancora eseguiti davvero (servono la chiave Gemini e un catalogo con pacchetti).
 
+## Ricerca dei driver
+- Il popolamento usa prima la **ricerca senza AI**: i link diretti a file `.zip/.exe/.pkg/.dmg/.cab` sulle pagine
+  ufficiali diventano candidati, esclusi manuali, firmware e utility. Gemini, quando risponde, migliora nomi e versioni;
+  se è sovraccarico o la quota gratuita è finita, il giro prosegue senza. In ogni caso entra nel catalogo solo ciò che
+  supera la verifica (dominio, download, firma del produttore, INF di stampante; l'architettura è quella degli INF).
+- Provata sulle pagine reali: Ricoh (driver universali Windows, PPD Mac) e Lexmark (UPD PCL XL/PS3/PCL5, pacchetti Mac).
+- Le pagine di ingresso (es. Kyocera, Brother, Epson) non contengono link a file: vanno sostituite con le pagine
+  dei modelli più usati.
+
 ## Da fare
 - Catalogo iniziale: `drivers.json` contiene le 13 marche con domini e firmatari, ma **nessun pacchetto**
   ancora: si popola con `recupero-link` in modalità `popola` (vedi `MESSA_IN_FUNZIONE.md`). Non ho

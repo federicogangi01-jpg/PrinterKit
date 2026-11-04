@@ -34,8 +34,8 @@ foreach ($s in @($scaricati)) {
             if ($x.Count -gt 0) { $trovate += $a; $infs += $x }
         }
         $r.arch = $trovate
-        $mancanti = @(@($p.arch) | Where-Object { $trovate -notcontains $_ })
-        if ($mancanti.Count -gt 0) { throw ('nessun INF per ' + ($mancanti -join ', ') + ' (architettura dichiarata non coerente)') }
+        # L'architettura vera è quella degli INF: si tengono quelle trovate, serve almeno una tra le dichiarate.
+        if ($trovate.Count -eq 0) { throw ('nessun INF di stampante per ' + (@($p.arch) -join ', ') + ' (architettura dichiarata non coerente)') }
         $auth = Test-PKPackageAuthenticity -PackageFile $file -ExtractedDir $dest -Manufacturer $man -Infs ([string[]]($infs | Select-Object -Unique))
         if (-not $auth.Ok) { throw $auth.Message }
         $r.ok = $true; $r.firma = $auth.Signer; $r.motivo = 'firma valida'

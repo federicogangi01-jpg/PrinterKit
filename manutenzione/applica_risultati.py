@@ -30,20 +30,20 @@ def esiti(elenco, cart_win, cart_mac):
         s = sw.get(i) or sm.get(i)
         v = vw.get(i) or vm.get(i)
         if s is None:
-            out.append((voce, False, "pacchetto non verificato (job di firma non eseguito)", None, None))
+            out.append((voce, False, "pacchetto non verificato (job di firma non eseguito)", None, None, None))
         elif s.get("errore"):
-            out.append((voce, False, s["errore"], None, None))
+            out.append((voce, False, s["errore"], None, None, None))
         elif v is None:
-            out.append((voce, False, "esito della verifica di firma mancante", None, None))
+            out.append((voce, False, "esito della verifica di firma mancante", None, None, None))
         else:
-            out.append((voce, bool(v["ok"]), v.get("motivo", ""), s.get("sha256"), v.get("firma")))
+            out.append((voce, bool(v["ok"]), v.get("motivo", ""), s.get("sha256"), v.get("firma"), v.get("arch")))
     return out
 
 
 def applica_cambiati(cat, elenco, risultati):
     oggi = datetime.date.today().isoformat()
     problemi = []
-    for voce, ok, motivo, sha, firma in risultati:
+    for voce, ok, motivo, sha, firma, arch in risultati:
         m = produttore(cat, voce["manufacturer"])
         p = next(x for x in m["packages"] if x["id"] == voce["package"])
         if ok:
@@ -58,7 +58,7 @@ def applica_cambiati(cat, elenco, risultati):
 def applica_candidati(cat, elenco, risultati):
     oggi = datetime.date.today().isoformat()
     aggiunti, problemi = [], []
-    for voce, ok, motivo, sha, firma in risultati:
+    for voce, ok, motivo, sha, firma, arch in risultati:
         m = produttore(cat, voce["manufacturer"])
         nuovo = dict(voce["package"])
         if not ok:
@@ -69,6 +69,8 @@ def applica_candidati(cat, elenco, risultati):
                         p["status"] = "da_verificare"
                         p["notes"] = f"{oggi}: sostituto proposto non valido ({motivo})"[:300]
             continue
+        if arch and nuovo["os"] == "windows":
+            nuovo["arch"] = [a for a in ("x86", "x64", "arm64") if a in arch]  # dagli INF del pacchetto
         nuovo.update({"sha256": sha, "status": "ok", "lastChecked": oggi,
                       "notes": (nuovo.get("notes") or "") + f" | firma: {firma}"})
         idx = next((k for k, p in enumerate(m["packages"]) if p["id"] == nuovo["id"]), None)

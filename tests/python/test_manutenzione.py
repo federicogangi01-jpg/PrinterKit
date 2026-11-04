@@ -115,6 +115,53 @@ PAGINA = """<html><body><h1>KX Driver</h1>
 <a href="https://mirror-driver.example/KX_8.5_x64.zip">mirror</a></body></html>"""
 
 
+KX_URL = "https://www.kyoceradocumentsolutions.eu/dl/KX_8.5_x64.zip"
+
+
+class TestRicercaSenzaAI(unittest.TestCase):
+    MARCA = {"id": "kyocera", "officialDomains": ["kyoceradocumentsolutions.eu"]}
+    VOCE = {"os": ["windows-10", "windows-11", "windows-7", "macos"], "arch": ["x64", "x86", "intel", "applesilicon"]}
+
+    def proposte(self, link):
+        return recupero_link.proposte_senza_ai([{"url": u, "testo": t} for u, t in link], self.MARCA, self.VOCE)
+
+    def test_file_driver_riconosciuti(self):
+        p = self.proposte([
+            ("https://d.kyoceradocumentsolutions.eu/KX_Driver_8.4.1716_x64.zip", "KX Driver 8.4 Windows 64 bit"),
+            ("https://d.kyoceradocumentsolutions.eu/KX_Driver_8.4.1716_x86.zip", "KX Driver 8.4 Windows 32 bit"),
+            ("https://d.kyoceradocumentsolutions.eu/Kyocera_OSX_Driver_5.4.pkg", "Mac printer driver"),
+        ])
+        self.assertEqual([x["arch"] for x in p], [["x64"], ["x86"], ["intel", "applesilicon"]])
+        self.assertEqual(p[0]["version"], "8.4.1716")
+        self.assertEqual(p[0]["osMin"], "6.1", "la pagina copre anche Windows 7")
+        self.assertEqual(p[2]["os"], "macos")
+
+    def test_esclusi_manuali_firmware_utility(self):
+        p = self.proposte([
+            ("https://d.kyoceradocumentsolutions.eu/manual.zip", "Manuale d'uso"),
+            ("https://d.kyoceradocumentsolutions.eu/fw_2.1.zip", "Firmware update"),
+            ("https://d.kyoceradocumentsolutions.eu/scan_twain.exe", "TWAIN scanner driver"),
+            ("https://d.kyoceradocumentsolutions.eu/app.pkg", "Mac utility"),
+            ("https://d.kyoceradocumentsolutions.eu/pagina.html", "Driver"),
+        ])
+        self.assertEqual(p, [])
+
+    def test_sistema_non_richiesto_dalla_pagina(self):
+        p = recupero_link.proposte_senza_ai([{"url": "https://x.kyoceradocumentsolutions.eu/drv.pkg", "testo": "Mac driver"}],
+                                           self.MARCA, {"os": ["windows-11"], "arch": ["x64"]})
+        self.assertEqual(p, [])
+
+    def test_limite_per_pagina(self):
+        p = self.proposte([(f"https://d.kyoceradocumentsolutions.eu/driver_{i}_x64.zip", "driver") for i in range(20)])
+        self.assertEqual(len(p), recupero_link.MAX_PER_PAGINA)
+
+    def test_id_univoci(self):
+        a = recupero_link.id_pacchetto("kyocera", {"driverFamily": "KX", "os": "windows", "arch": ["x64"], "url": "https://a/1.zip"})
+        b = recupero_link.id_pacchetto("kyocera", {"driverFamily": "KX", "os": "windows", "arch": ["x64"], "url": "https://a/2.zip"})
+        self.assertNotEqual(a, b)
+        self.assertRegex(a, r"^[a-z0-9.-]+$")
+
+
 class TestRecuperoLinkConGeminiSimulato(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -141,29 +188,34 @@ class TestRecuperoLinkConGeminiSimulato(unittest.TestCase):
         return (comune.leggi_json(os.path.join(self.tmp, "candidati.json")),
                 comune.leggi_json(os.path.join(self.tmp, "scartati.json")))
 
+    @staticmethod
+    def url(c):
+        return [x["package"]["url"] for x in c]
+
     def test_link_valido_accettato(self):
         c, s = self.esegui({"pacchetti": [{"url": "https://www.kyoceradocumentsolutions.eu/dl/KX_8.5_x64.zip",
                                            "driverFamily": "KX Driver", "version": "8.5", "os": "windows", "osMin": "10.0",
                                            "arch": ["x64"], "language": "pcl6", "fileType": "zip", "motivazione": "ok"}]})
-        self.assertEqual(len(c), 1)
+        self.assertEqual(len(c), 1, "stesso file da Gemini e senza AI: un solo candidato")
         self.assertEqual(c[0]["package"]["status"], "da_verificare", "resta da verificare finché la firma non è controllata")
+        self.assertIn("Gemini", c[0]["package"]["notes"])
 
     def test_link_inventato_scartato(self):
         c, s = self.esegui({"pacchetti": [{"url": "https://www.kyoceradocumentsolutions.eu/dl/KX_9.0_x64.zip",
                                            "driverFamily": "KX", "os": "windows", "osMin": "10.0", "arch": ["x64"],
                                            "fileType": "zip", "motivazione": "inventato"}]})
-        self.assertEqual(c, [])
+        self.assertEqual(self.url(c), [KX_URL], "resta solo il file vero trovato senza AI")
         self.assertIn("inventato", s[0]["motivo"])
 
     def test_link_non_ufficiale_scartato(self):
         c, s = self.esegui({"pacchetti": [{"url": "https://mirror-driver.example/KX_8.5_x64.zip", "driverFamily": "KX",
                                            "os": "windows", "osMin": "10.0", "arch": ["x64"], "fileType": "zip", "motivazione": "x"}]})
-        self.assertEqual(c, [])
+        self.assertNotIn("https://mirror-driver.example/KX_8.5_x64.zip", self.url(c))
 
     def test_architettura_incoerente_scartata(self):
         c, s = self.esegui({"pacchetti": [{"url": "https://www.kyoceradocumentsolutions.eu/dl/Kyocera_Mac.pkg", "driverFamily": "Mac",
                                            "os": "macos", "osMin": "12.0", "arch": ["x64"], "fileType": "pkg", "motivazione": "x"}]})
-        self.assertEqual(c, [])
+        self.assertNotIn("https://www.kyoceradocumentsolutions.eu/dl/Kyocera_Mac.pkg", self.url(c))
         self.assertIn("architettura", s[0]["motivo"])
 
     def test_errore_di_gemini_registrato(self):
@@ -181,15 +233,15 @@ class TestRecuperoLinkConGeminiSimulato(unittest.TestCase):
                                apri_pagina=lambda u, b=False: (PAGINA, "https://www.kyoceradocumentsolutions.eu/x.html"))
         finally:
             recupero_link.CATALOGO, recupero_link.PAGINE = orig
-        s = comune.leggi_json(os.path.join(self.tmp, "scartati.json"))
-        self.assertIn("429", s[0]["motivo"])
+        c = comune.leggi_json(os.path.join(self.tmp, "candidati.json"))
+        self.assertEqual(self.url(c), [KX_URL], "senza Gemini resta la ricerca senza AI")
+        self.assertIn("senza AI", c[0]["package"]["notes"])
 
     def test_risposta_vuota_o_errata(self):
         c, s = self.esegui({"pacchetti": []})
-        self.assertEqual(c, [])
-        self.assertTrue(s)
-        c, s = self.esegui({"pacchetti": [{"url": None, "os": "linux"}]})
-        self.assertEqual(c, [])
+        self.assertEqual(self.url(c), [KX_URL])
+        c, s = self.esegui({"pacchetti": [{"url": None, "os": "linux"}, "testo"]})
+        self.assertEqual(self.url(c), [KX_URL])
 
 
 class TestGeminiTentativi(unittest.TestCase):

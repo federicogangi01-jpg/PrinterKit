@@ -17,6 +17,7 @@ import subprocess
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 from comune import CATALOGO, PAGINE, dominio_ufficiale, leggi_json, produttore, scrivi_json
@@ -138,7 +139,8 @@ def valida_proposta(p, link_pagina, marca, voce=None):
 
 def id_pacchetto(marca_id, p):
     base = re.sub(r"[^a-z0-9]+", "-", f"{marca_id}-{p['driverFamily']}-{p['os']}-{'-'.join(sorted(p['arch']))}".lower())
-    return base.strip("-")[:80]
+    breve = __import__("hashlib").sha1(p["url"].encode()).hexdigest()[:6]
+    return base.strip("-")[:72] + "-" + breve
 
 
 def obiettivi(modo, cat, pagine, rif_git="HEAD~1"):
@@ -169,8 +171,73 @@ def obiettivi(modo, cat, pagine, rif_git="HEAD~1"):
     return out
 
 
-def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, scartati):
-    """Una pagina: apre, estrae i link, chiede a Gemini, valida le proposte."""
+# ---------- Ricerca senza AI ----------
+# I link diretti ai file sui domini ufficiali diventano candidati. Non è la ricerca a garantire che siano
+# driver giusti: lo garantisce la verifica successiva (download, firma del produttore, INF per architettura).
+
+ESCLUSI = re.compile(r"manual|guida|guide|firmware|utilit|scan|twain|wia|fax|readme|release.?note|brochure|"
+                     r"datasheet|leaflet|\.pdf\b|font|sdk|tool|monitor|status|setup.?guide", re.I)
+INDIZI_DRIVER = re.compile(r"driver|pcl|postscript|\bps\b|\bupd\b|universal|\bkx\b|\bgpd\b|printer|stampa|ppd|ufr", re.I)
+ARCH_URL = (("arm64", re.compile(r"arm64|aarch64", re.I)),
+            ("x64", re.compile(r"x64|amd64|64.?bit|win64|w64", re.I)),
+            ("x86", re.compile(r"x86|i386|32.?bit|win32|w32", re.I)))
+MAX_PER_PAGINA = int(os.environ.get("PK_MAX_PER_PAGINA", "6"))
+
+
+def proposte_senza_ai(link, marca, voce, cercato=None):
+    """Proposte nello stesso formato di quelle di Gemini, ricavate solo da URL e testo dei link."""
+    os_voce = {o.split("-")[0] for o in voce["os"]}
+    arch_voce = list(voce["arch"])
+    proposte = []
+    for l in link:
+        url, testo = l["url"], l.get("testo") or ""
+        percorso = urllib.parse.urlsplit(url).path
+        nome = percorso.rsplit("/", 1)[-1]
+        est = nome.lower().rsplit(".", 1)[-1] if "." in nome else ""
+        if est not in ("zip", "exe", "pkg", "dmg", "cab"):
+            continue
+        tutto = f"{nome} {testo}"
+        if ESCLUSI.search(tutto):
+            continue
+        sistema = "macos" if est in ("pkg", "dmg") else "windows"
+        if sistema not in os_voce:
+            continue
+        # Su Mac un pacchetto firmato potrebbe essere un'utility: serve un indizio di driver nel nome o nel testo.
+        if sistema == "macos" and not INDIZI_DRIVER.search(tutto):
+            continue
+        if sistema == "macos":
+            arch = [a for a in arch_voce if a in ("intel", "applesilicon")] or ["intel", "applesilicon"]
+            os_min = "12.0"
+        else:
+            trovate = [a for a, rx in ARCH_URL if rx.search(tutto)]
+            arch = trovate[:1] or [a for a in arch_voce if a in ("x86", "x64", "arm64")] or ["x64"]
+            os_min = min((OS_MIN[o] for o in voce["os"] if o in OS_MIN), key=lambda v: [int(x) for x in v.split(".")], default="10.0")
+        if cercato and (sistema != cercato.get("os") or not set(cercato.get("arch") or []) <= set(arch)):
+            continue
+        ver = re.search(r"(?<![\d.])(\d+\.\d+(?:\.\d+){0,2})(?![\d.])", tutto)
+        lingua = "ps" if re.search(r"postscript|\bps\b|kpdl|br-?script", tutto, re.I) else \
+                 "pcl6" if re.search(r"pcl\s?6|pcl\s?xl|pclxl", tutto, re.I) else \
+                 "pcl5" if re.search(r"pcl\s?5", tutto, re.I) else None
+        da_nome = re.sub(r"[_-]+", " ", nome.rsplit(".", 1)[0]).strip()
+        etichetta = re.sub(r"\s+", " ", testo).strip()
+        # "Download", "Scarica", "Download PS3 emulation": il nome del file dice di più.
+        if not etichetta or re.fullmatch(r"(download|scarica|download now|get file)", etichetta, re.I):
+            famiglia = da_nome[:80]
+        elif re.match(r"(download|scarica)\b", etichetta, re.I):
+            resto = re.sub(r"^(download|scarica)\s*", "", etichetta, flags=re.I)
+            famiglia = f"{da_nome} ({resto})"[:80]
+        else:
+            famiglia = etichetta[:80]
+        proposte.append({"url": url, "driverFamily": famiglia, "version": ver.group(1) if ver else None,
+                         "os": sistema, "osMin": os_min, "osMax": None, "arch": arch, "language": lingua,
+                         "fileType": est, "motivazione": "link diretto a un file sulla pagina ufficiale (senza AI)"})
+    # Prima quelli con un indizio di driver di stampa.
+    proposte.sort(key=lambda p: 0 if INDIZI_DRIVER.search(p["url"] + " " + p["driverFamily"]) else 1)
+    return proposte[:MAX_PER_PAGINA]
+
+
+def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, scartati, stato_ai):
+    """Una pagina: apre, estrae i link, proposte senza AI + (se disponibile) Gemini, validazione."""
     try:
         html, finale = apri_pagina(voce["pageUrl"], voce.get("needsBrowser", False))
     except Exception as e:
@@ -190,17 +257,26 @@ def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, s
     cercato = None
     if vecchio:
         cercato = {k: vecchio.get(k) for k in ("driverFamily", "version", "os", "osMin", "arch", "language", "fileType")}
-    try:
-        risposta = gemini(costruisci_prompt(m, voce, link, testo, cercato), chiave, modello)
-    except QuotaEsaurita:
-        raise
-    except Exception as e:
-        scartati.append({"voce": voce, "motivo": f"Gemini non ha risposto: {e}"})
-        if sum(1 for x in scartati if x["motivo"].startswith("Gemini non ha risposto")) <= 3:
-            errore(f"Gemini non ha risposto per {voce['pageUrl']}: {e}")
-        return
+    proposte = proposte_senza_ai(link, m, voce, cercato)
+    if stato_ai["attivo"]:
+        try:
+            risposta = gemini(costruisci_prompt(m, voce, link[:150], testo, cercato), chiave, modello)
+            dagli_ai = [p for p in (risposta.get("pacchetti") or []) if isinstance(p, dict)]
+            # Le proposte di Gemini hanno nomi e versioni migliori: sostituiscono quelle senza AI sullo stesso URL.
+            urls_ai = {p.get("url") for p in dagli_ai}
+            proposte = dagli_ai + [p for p in proposte if p["url"] not in urls_ai]
+        except QuotaEsaurita as e:
+            stato_ai["attivo"] = False
+            errore(f"{e} – si prosegue senza AI")
+        except Exception as e:
+            stato_ai["errori"] += 1
+            errore(f"Gemini non ha risposto per {voce['pageUrl']}: {e} – uso solo la ricerca senza AI")
+            if stato_ai["errori"] >= 2:
+                # Ogni tentativo fallito costa minuti di attesa: dopo due pagine si prosegue senza AI.
+                stato_ai["attivo"] = False
+                errore("Gemini non disponibile in questo giro: le altre pagine usano solo la ricerca senza AI")
     trovati = 0
-    for p in (risposta.get("pacchetti") or []):
+    for p in proposte:
         problema = valida_proposta(p, link, m, None if vecchio else voce)
         if problema:
             scartati.append({"voce": voce, "proposta": p, "motivo": problema})
@@ -208,6 +284,9 @@ def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, s
         if vecchio and (p["os"] != vecchio["os"] or not set(vecchio["arch"]) <= set(p["arch"])):
             scartati.append({"voce": voce, "proposta": p, "motivo": "non corrisponde al pacchetto da sostituire"})
             continue
+        if any(c["package"]["url"] == p["url"] for c in candidati):
+            continue
+        origine = "senza AI" if "senza AI" in (p.get("motivazione") or "") else "Gemini"
         candidati.append({
             "manufacturer": m["id"], "sostituisce": vecchio["id"] if vecchio else None,
             "package": {
@@ -218,14 +297,16 @@ def elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, s
                 "url": p["url"], "sourcePage": voce["pageUrl"], "sha256": None, "fileType": p["fileType"],
                 "extractArgs": vecchio.get("extractArgs") if vecchio else None, "infHint": None,
                 "driverName": vecchio.get("driverName") if vecchio else None, "lastChecked": None,
-                "status": "da_verificare", "notes": "proposto da Gemini: " + (p.get("motivazione") or "")[:200],
+                "status": "da_verificare", "notes": f"trovato {origine}: " + (p.get("motivazione") or "")[:200],
             },
             "signerNames": m["signerNames"], "macSignerNames": m.get("macSignerNames", m["signerNames"]),
             "officialDomains": m["officialDomains"], "match": m["match"],
         })
         trovati += 1
-    if not trovati and vecchio is None and not any(s.get("voce") is voce for s in scartati):
-        scartati.append({"voce": voce, "motivo": "Gemini non ha trovato pacchetti adatti nella pagina"})
+        if vecchio:
+            break  # per un link rotto basta un sostituto
+    if not trovati and vecchio is None:
+        scartati.append({"voce": voce, "motivo": "nessun link diretto a file di driver nella pagina (pagina di ingresso o elenco caricato dopo una scelta)"})
     if vecchio and not trovati:
         scartati.append({"voce": voce, "pacchetto": vecchio["id"], "motivo": "nessun sostituto valido"})
 
@@ -239,28 +320,28 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
     ap.add_argument("--out", default=os.path.join(os.path.dirname(__file__), "out"))
     ap.add_argument("--max", type=int, default=int(os.environ.get("PK_MAX_PAGINE", "20")))
     ap.add_argument("--attesa", type=float, default=float(os.environ.get("PK_ATTESA_SEC", "7")))
+    ap.add_argument("--max-candidati", type=int, default=int(os.environ.get("PK_MAX_CANDIDATI", "40")))
     a = ap.parse_args(argv)
     modo = "rotti" if a.rotti else "popola" if a.popola else "nuove"
     chiave = os.environ.get("GEMINI_API_KEY", "")
     modello = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")
+    stato_ai = {"attivo": bool(chiave) and os.environ.get("PK_SENZA_AI") != "1", "errori": 0}
     if not chiave:
-        errore("GEMINI_API_KEY mancante: va in Settings → Secrets and variables → Actions → "
-               "scheda 'Secrets' → 'Repository secrets' (non Environment, Codespaces o Dependabot), con questo nome esatto")
-        return 2
+        print("GEMINI_API_KEY assente: uso solo la ricerca senza AI")
     cat, pagine = leggi_json(CATALOGO), leggi_json(PAGINE)
     lavori = obiettivi(modo, cat, pagine)
     rinviati = lavori[a.max:]
     lavori = lavori[:a.max]
     candidati, scartati = [], []
     for i, (m, voce, vecchio) in enumerate(lavori):
-        if i:
+        if len(candidati) >= a.max_candidati:
+            # Ogni candidato va scaricato e firmato: oltre il limite si rimanda, per non allungare troppo il giro.
+            rinviati = lavori[i:] + rinviati
+            break
+        if i and stato_ai["attivo"]:
             time.sleep(a.attesa)  # limiti al minuto del piano gratuito
         try:
-            elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, scartati)
-        except QuotaEsaurita as e:
-            errore(f"{e} – le pagine restanti passano alla prossima esecuzione")
-            rinviati = [(mm, vv, pp) for mm, vv, pp in lavori[i:]] + rinviati
-            break
+            elabora(m, voce, vecchio, chiave, modello, gemini, apri_pagina, candidati, scartati, stato_ai)
         except Exception as e:  # una pagina non deve fermare le altre
             import traceback
             dettaglio = traceback.format_exc().strip().splitlines()[-3:]
@@ -270,7 +351,9 @@ def main(argv=None, gemini=chiedi_gemini, apri_pagina=rete.apri_pagina):
     scrivi_json(os.path.join(a.out, "candidati.json"), candidati)
     scrivi_json(os.path.join(a.out, "scartati.json"), scartati)
     scrivi_json(os.path.join(a.out, "rinviati.json"), [{"pageUrl": v["pageUrl"], "manufacturer": mm["id"]} for mm, v, _ in rinviati])
-    riepilogo = f"{len(candidati)} candidati, {len(scartati)} scartati, {len(rinviati)} rinviati alla prossima esecuzione"
+    da_ai = sum(1 for c in candidati if "Gemini" in c["package"]["notes"])
+    riepilogo = (f"{len(candidati)} candidati ({da_ai} da Gemini, {len(candidati) - da_ai} senza AI), "
+                 f"{len(scartati)} scartati, {len(rinviati)} rinviati alla prossima esecuzione")
     print(("::notice::" if os.environ.get("GITHUB_ACTIONS") else "") + riepilogo)
     return 0
 
