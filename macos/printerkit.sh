@@ -189,7 +189,8 @@ install_one() {
     sig=$(pkgutil --check-signature "$pkgfile" 2>&1)
     signer=$(print -r -- "$sig" | awk '/^ *1\. /{sub(/^ *1\. /,""); print; exit}')
     if print -r -- "$sig" | grep -qE 'Status: signed (by a developer certificate issued by Apple|Apple Software)'; then
-      while read -r n; do [[ -n "$n" && "$signer" == *"$n"* ]] && ok=1; done <<< "$(js firmatari "$CAT" "$man")"
+      local nome=$(print -r -- "$signer" | sed -E 's/^[^:]*: *//; s/ *\([A-Z0-9]+\)$//' | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9')
+      while read -r n; do n=$(print -r -- "$n" | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9'); [[ -n "$n" && "$nome" == "$n" ]] && ok=1; done <<< "$(js firmatari "$CAT" "$man")"
     fi
     if (( ! ok )); then
       [[ -n "$mnt" ]] && hdiutil detach "$mnt" >/dev/null

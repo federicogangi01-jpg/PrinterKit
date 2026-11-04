@@ -113,7 +113,8 @@ function Test-PKPackageAuthenticity {
         $signerShown = $s.Signer
     }
     if ($ExtractedDir -and (Test-Path -LiteralPath $ExtractedDir)) {
-        foreach ($exe in @(Get-ChildItem -LiteralPath $ExtractedDir -Include '*.exe', '*.msi' -Recurse -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 20)) {
+        # -Include non funziona con -LiteralPath: il filtro per estensione va fatto a mano.
+        foreach ($exe in @(Get-ChildItem -LiteralPath $ExtractedDir -Recurse -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer -and @('.exe', '.msi') -contains $_.Extension.ToLower() } | Select-Object -First 20)) {
             $s = Test-PKFileSignature $exe.FullName $signers -AllowWhql
             if (-not $s.Valid) { return New-Object PSObject -Property @{ Ok = $false; Signer = $s.Signer; Message = ('file non firmato dal produttore: {0} ({1})' -f $exe.Name, $s.Message); Details = $details } }
         }

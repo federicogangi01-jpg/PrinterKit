@@ -67,10 +67,12 @@
       ],
       "signerNames": [
         "RICOH COMPANY, LTD.",
-        "Ricoh Company, Ltd."
+        "Ricoh Company, Ltd.",
+        "Ricoh Co., Ltd."
       ],
       "macSignerNames": [
-        "RICOH COMPANY, LTD."
+        "RICOH COMPANY, LTD.",
+        "Ricoh Co., Ltd."
       ],
       "packages": []
     },

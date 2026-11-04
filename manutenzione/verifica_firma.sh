@@ -19,8 +19,11 @@ for (( i=0; i<n; i++ )); do
     motivo="firmatario non ammesso o firma non valida: ${firma:-nessuna}"
     if print -r -- "$out" | grep -qE 'Status: signed (by a developer certificate issued by Apple|Apple Software)'; then
       signers=$(J "$ELENCO" "$idx.macSignerNames")
-      for s in ${(f)"$(print -r -- "$signers" | tr -d '[]' | tr ',' '\n' | tr -d '"')"}; do
-        [[ -n "$s" && "$firma" == *"$s"* ]] && { ok=true; motivo="firma valida"; }
+      # "Developer ID Installer: Ricoh Co., Ltd. (5KACUT3YX8)" -> "ricohcoltd", confrontato con i nomi ammessi normalizzati.
+      nome=$(print -r -- "$firma" | sed -E 's/^[^:]*: *//; s/ *\([A-Z0-9]+\)$//' | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9')
+      for s in ${(f)"$(osascript -l JavaScript -e "function run(a){return JSON.parse(a[0]).join('\n')}" "$signers")"}; do
+        n=$(print -r -- "$s" | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9')
+        [[ -n "$n" && "$nome" == "$n" ]] && { ok=true; motivo="firma valida"; }
       done
     fi
     [[ -n "$mnt" ]] && hdiutil detach "$mnt" >/dev/null
