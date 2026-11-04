@@ -276,6 +276,11 @@ class TestGeminiTentativi(unittest.TestCase):
 
 
 class TestApplicaRisultati(unittest.TestCase):
+    @staticmethod
+    def scrivi_con_bom(percorso, dati):
+        with open(percorso, "w", encoding="utf-8-sig") as f:
+            json.dump(dati, f)
+
     def test_solo_firme_valide_entrano(self):
         tmp = tempfile.mkdtemp()
         cat_path = os.path.join(tmp, "drivers.json")
@@ -289,7 +294,8 @@ class TestApplicaRisultati(unittest.TestCase):
         w = os.path.join(tmp, "w"); os.makedirs(w)
         comune.scrivi_json(os.path.join(w, "scaricati.json"), [{"indice": 0, "file": "a", "sha256": "a" * 64, "errore": None},
                                                                 {"indice": 1, "file": "b", "sha256": "b" * 64, "errore": None}])
-        comune.scrivi_json(os.path.join(w, "verificati_windows.json"), [{"indice": 0, "ok": True, "firma": "KYOCERA Document Solutions Inc.", "motivo": "firma valida"},
+        # Scritto come fa Windows PowerShell 5.1 (Set-Content -Encoding UTF8): con il BOM.
+        self.scrivi_con_bom(os.path.join(w, "verificati_windows.json"), [{"indice": 0, "ok": True, "firma": "KYOCERA Document Solutions Inc.", "motivo": "firma valida"},
                                                                          {"indice": 1, "ok": False, "firma": "Altro", "motivo": "firmatario non ammesso"}])
         applica_risultati.main(["--candidati", e, w, os.path.join(tmp, "m"), "--out", tmp, "--catalogo", cat_path])
         nuovo = comune.leggi_json(cat_path)

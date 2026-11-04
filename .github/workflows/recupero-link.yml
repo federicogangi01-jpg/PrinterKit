@@ -108,9 +108,11 @@ jobs:
       - id: a
         run: |
           mkdir -p scaricati-win scaricati-mac
-          python manutenzione/applica_risultati.py --candidati manutenzione/out/candidati.json scaricati-win scaricati-mac
-          python manutenzione/valida_catalogo.py
-          python manutenzione/genera_indice_xp.py
+          # Ogni comando che fallisce lascia un'annotazione con l'ultima riga dell'errore.
+          prova() { "$@" > out.txt 2>&1 || { cat out.txt; echo "::error::$* -> $(tail -n 3 out.txt | tr '\n' ' ')"; exit 1; }; cat out.txt; }
+          prova python manutenzione/applica_risultati.py --candidati manutenzione/out/candidati.json scaricati-win scaricati-mac
+          prova python manutenzione/valida_catalogo.py
+          prova python manutenzione/genera_indice_xp.py
       - name: Pull Request (nessun commit diretto)
         if: steps.a.outputs.aggiunti != '0'
         run: |

@@ -6,11 +6,11 @@ import os
 import sys
 
 import rete
-from comune import scrivi_json
+from comune import leggi_json, scrivi_json
 
 
 def main(elenco, cartella, sistema):
-    voci = json.load(open(elenco, encoding="utf-8"))
+    voci = leggi_json(elenco)
     os.makedirs(cartella, exist_ok=True)
     risultati = []
     for i, v in enumerate(voci):

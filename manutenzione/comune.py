@@ -20,7 +20,8 @@ USER_AGENT = (
 
 
 def leggi_json(percorso):
-    with open(percorso, encoding="utf-8") as f:
+    # utf-8-sig: i file scritti da Windows PowerShell 5.1 iniziano con il BOM.
+    with open(percorso, encoding="utf-8-sig") as f:
         return json.load(f)
 
 
