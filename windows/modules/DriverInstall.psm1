@@ -31,17 +31,38 @@ function Test-PKDomainList {
 
 # ---------- Firma digitale ----------
 
+function ConvertTo-PKNormalName {
+    # "RICOH COMPANY,LTD." e "Ricoh Company, Ltd." diventano uguali: solo lettere e cifre, minuscole.
+    param([string]$Text)
+    return (("$Text".ToLower()) -replace '[^a-z0-9]', '')
+}
+
+function Get-PKSubjectNames {
+    # Valori di CN e O del soggetto del certificato (anche quelli tra virgolette, che contengono virgole).
+    param([string]$Subject)
+    $out = New-Object System.Collections.ArrayList
+    foreach ($m in [regex]::Matches("$Subject", '(?:^|,)\s*(CN|O)=("(?:[^"]|"")*"|[^,]*)')) {
+        $v = $m.Groups[2].Value.Trim()
+        if ($v.StartsWith('"') -and $v.EndsWith('"')) { $v = $v.Substring(1, $v.Length - 2).Replace('""', '"') }
+        [void]$out.Add($v)
+    }
+    return ,([string[]]$out.ToArray())
+}
+
+function Test-PKSignerText {
+    # Il CN o l'O del certificato deve coincidere con uno dei firmatari ammessi (a meno di spazi e punteggiatura).
+    param([string]$Subject, [object[]]$Names)
+    $allowed = @($Names | ForEach-Object { ConvertTo-PKNormalName $_ } | Where-Object { $_ })
+    foreach ($v in (Get-PKSubjectNames $Subject)) {
+        if ($allowed -contains (ConvertTo-PKNormalName $v)) { return $true }
+    }
+    return $false
+}
+
 function Test-PKSignerName {
     param([Security.Cryptography.X509Certificates.X509Certificate2]$Certificate, [object[]]$Names)
     if (-not $Certificate) { return $false }
-    $subject = $Certificate.Subject
-    foreach ($n in $Names) {
-        $n = "$n"
-        # Confronto su CN e O del certificato, senza distinzione di maiuscole.
-        if ($subject -match ('(^|,\s*)(CN|O)="?' + [regex]::Escape($n) + '"?(,|$)')) { return $true }
-        if ($subject.ToLower().Contains(('cn=' + $n).ToLower()) -or $subject.ToLower().Contains(('o=' + $n).ToLower())) { return $true }
-    }
-    return $false
+    return (Test-PKSignerText $Certificate.Subject $Names)
 }
 
 function Get-PKSignerDisplay {

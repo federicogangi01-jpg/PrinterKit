@@ -102,6 +102,19 @@ Describe 'Scelta del pacchetto' {
     }
 }
 
+Describe 'Firmatario del certificato' {
+    It 'riconosce il nome scritto in modo diverso' {
+        Test-PKSignerText 'CN="RICOH COMPANY,LTD.", O="RICOH COMPANY,LTD.", L=Ohta-ku, C=JP' @('RICOH COMPANY, LTD.') | Should -BeTrue
+        Test-PKSignerText 'CN=KYOCERA Document Solutions Inc., O=KYOCERA Document Solutions Inc., C=JP' @('KYOCERA Document Solutions Inc.') | Should -BeTrue
+        Test-PKSignerText 'CN=Microsoft Windows Hardware Compatibility Publisher, O=Microsoft Corporation, C=US' @('Microsoft Windows Hardware Compatibility Publisher') | Should -BeTrue
+    }
+    It 'rifiuta nomi simili ma diversi' {
+        Test-PKSignerText 'CN=RICOH COMPANY LTD FAKE, O=Evil' @('RICOH COMPANY, LTD.') | Should -BeFalse
+        Test-PKSignerText 'CN=Driver Gratis, O=RICOH COMPANYX' @('RICOH COMPANY, LTD.') | Should -BeFalse
+        Test-PKSignerText 'CN=Someone, OU=RICOH COMPANY LTD' @('RICOH COMPANY, LTD.') | Should -BeFalse
+    }
+}
+
 Describe 'Nome cartella del log' {
     It 'Driver <Marca> <Modello> senza ripetere la marca' { Get-PKInterventionFolderName 'Kyocera' 'KYOCERA ECOSYS M2540dn' '1.2.3.4' | Should -Be 'Driver KYOCERA ECOSYS M2540dn' }
     It 'aggiunge la marca se manca' { Get-PKInterventionFolderName 'Kyocera' 'ECOSYS M2540dn' '1.2.3.4' | Should -Be 'Driver Kyocera ECOSYS M2540dn' }
