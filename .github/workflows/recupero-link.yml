@@ -11,7 +11,8 @@ on:
         default: rotti
   push:
     branches: [main]
-    paths: [catalogo/pagine_ufficiali.json]
+    # popola.txt: basta cambiarne il contenuto (con "[popola]" nel messaggio) per rilanciare il popolamento.
+    paths: [catalogo/pagine_ufficiali.json, catalogo/popola.txt]
 permissions:
   contents: write
   pull-requests: write
