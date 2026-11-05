@@ -48,8 +48,8 @@ foreach ($s in @($scaricati)) {
         $tutti = ($nomi -join ' ')
         $lingua = $null
         if ($tutti -match 'PCL\s?6|PCL\s?XL|PCLXL') { $lingua = 'pcl6' } elseif ($tutti -match '\bPS\b|PostScript|KPDL|BR-Script') { $lingua = 'ps' } elseif ($tutti -match 'PCL\s?5') { $lingua = 'pcl5' }
-        $r.famiglia = (@($nomi | Sort-Object Length) | Select-Object -First 1)
-        $r.versione = $ver; $r.linguaggio = $lingua; $r.modelli = $nomi.Count
+        $r.famiglia = [string](@($nomi | ForEach-Object { [string]$_ } | Sort-Object Length) | Select-Object -First 1)
+        $r.versione = [string]$ver; $r.linguaggio = [string]$lingua; $r.modelli = $nomi.Count
     } catch { $r.motivo = $_.Exception.Message }
     Write-Host ('{0}: {1}' -f $s.file, $r.motivo)
     $out += $r

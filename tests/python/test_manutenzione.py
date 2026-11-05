@@ -337,3 +337,12 @@ class TestRicette(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestTestoInf(unittest.TestCase):
+    def test_stringa_come_oggetto_powershell(self):
+        import applica_risultati as a
+        self.assertEqual(a.testo({"value": " RICOH PCL6 UniversalDriver V4.46 ", "Length": 30}), "RICOH PCL6 UniversalDriver V4.46")
+        self.assertEqual(a.testo("x"), "x")
+        self.assertIsNone(a.testo(""))
+        self.assertIsNone(a.testo(None))

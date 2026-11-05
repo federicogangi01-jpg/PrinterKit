@@ -29,8 +29,8 @@ for (( i=0; i<n; i++ )); do
       # "Developer ID Installer: Ricoh Co., Ltd. (5KACUT3YX8)" -> "ricohcoltd", confrontato con i nomi ammessi normalizzati.
       nome=$(print -r -- "$firma" | sed -E 's/^[^:]*: *//; s/ *\([A-Z0-9]+\)$//' | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9')
       for s in ${(f)"$(python3 -c 'import json,sys;print("\n".join(json.loads(sys.argv[1])))' "$signers")"}; do
-        n=$(print -r -- "$s" | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9')
-        [[ -n "$n" && "$nome" == "$n" ]] && { ok=true; motivo="firma valida"; }
+        ammesso=$(print -r -- "$s" | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9')
+        [[ -n "$ammesso" && "$nome" == "$ammesso" ]] && { ok=true; motivo="firma valida"; }
       done
     fi
     [[ -n "$mnt" ]] && hdiutil detach "$mnt" >/dev/null

@@ -14,6 +14,13 @@ import sys
 from comune import CATALOGO, leggi_json, produttore, scrivi_json
 
 
+def testo(v):
+    """PowerShell 5.1 a volte scrive una stringa come oggetto {"value": ...}: si tiene solo il testo."""
+    if isinstance(v, dict):
+        v = v.get("value")
+    return v.strip() if isinstance(v, str) and v.strip() else None
+
+
 def _carica(cartella, nome_ver):
     sca = os.path.join(cartella, "scaricati.json")
     ver = os.path.join(cartella, nome_ver)
@@ -73,12 +80,13 @@ def applica_candidati(cat, elenco, risultati):
         if ver_inf.get("arch") and nuovo["os"] == "windows":
             nuovo["arch"] = [a for a in ("x86", "x64", "arm64") if a in ver_inf["arch"]]  # dagli INF del pacchetto
         # Nome, versione e linguaggio dall'INF valgono più di quelli ricavati dal link.
-        if ver_inf.get("famiglia"):
-            nuovo["driverFamily"] = ver_inf["famiglia"][:80]
-        if ver_inf.get("versione"):
-            nuovo["version"] = ver_inf["versione"]
-        if ver_inf.get("linguaggio"):
-            nuovo["language"] = ver_inf["linguaggio"]
+        famiglia, versione, linguaggio = (testo(ver_inf.get(k)) for k in ("famiglia", "versione", "linguaggio"))
+        if famiglia:
+            nuovo["driverFamily"] = famiglia[:80]
+        if versione:
+            nuovo["version"] = versione
+        if linguaggio:
+            nuovo["language"] = linguaggio
         nuovo.update({"sha256": sha, "status": "ok", "lastChecked": oggi,
                       "notes": (nuovo.get("notes") or "") + f" | firma: {firma}"})
         idx = next((k for k, p in enumerate(m["packages"]) if p["id"] == nuovo["id"]), None)
