@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-11-05T06:15:26+00:00",
+  "updatedAt": "2026-11-05T10:43:18+00:00",
   "manufacturers": [
     {
       "id": "hp",
@@ -74,7 +74,81 @@
         "RICOH COMPANY, LTD.",
         "Ricoh Co., Ltd."
       ],
-      "packages": []
+      "packages": [
+        {
+          "id": "ricoh-z07510l24-windows-x64-x86-7419c7",
+          "driverFamily": "PCL6 Driver for Universal Print RICOH PCL6 UniversalDriver V4.46",
+          "version": "4.46.0.0",
+          "os": "windows",
+          "osMin": "10.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "x64"
+          ],
+          "language": null,
+          "models": "*",
+          "url": "https://support.ricoh.com/bb/pub_e/dr_ut_e/0001346/0001346104/V44600/z07510L24.exe",
+          "sourcePage": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+          "sha256": "b84d2a7592bd8ef8ef220cfab1fe258271186edf6bc59e6bc35769ce9d45cf5b",
+          "fileType": "exe",
+          "extractArgs": null,
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-11-05",
+          "status": "ok",
+          "notes": "trovato senza AI: link diretto a un file sulla pagina ufficiale (senza AI) | firma: RICOH COMPANY"
+        },
+        {
+          "id": "ricoh-z07513l24-windows-x64-x86-6cf275",
+          "driverFamily": "PS Driver for Universal Print RICOH PS UniversalDriver V4.46",
+          "version": "4.46.0.0",
+          "os": "windows",
+          "osMin": "10.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "x64"
+          ],
+          "language": null,
+          "models": "*",
+          "url": "https://support.ricoh.com/bb/pub_e/dr_ut_e/0001346/0001346099/V44600/z07513L24.exe",
+          "sourcePage": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+          "sha256": "c54ae1da3d3d8ce101712dddb994e5a8071042cb69da2955120d8c471a258f43",
+          "fileType": "exe",
+          "extractArgs": null,
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-11-05",
+          "status": "ok",
+          "notes": "trovato senza AI: link diretto a un file sulla pagina ufficiale (senza AI) | firma: RICOH COMPANY"
+        },
+        {
+          "id": "ricoh-savin-ps-printers-vol2-lio-3-8-0-0-macos-applesilicon-intel-ce1b32",
+          "driverFamily": "SAVIN PS Printers Vol2 LIO 3.8.0.0",
+          "version": null,
+          "os": "macos",
+          "osMin": "12.0",
+          "osMax": null,
+          "buildMin": null,
+          "arch": [
+            "intel",
+            "applesilicon"
+          ],
+          "language": null,
+          "models": "*",
+          "url": "https://support.ricoh.com/bb/pub_e/dr_ut_e/0001338/0001338941/V3800/SAVIN_PS_Printers_Vol2_LIO_3.8.0.0.dmg",
+          "sourcePage": "https://support.ricoh.com/bb/html/dr_ut_e/sav/model/mpc60/mpc60en.htm",
+          "sha256": "b8841d76585d674f32de0c7e02f8d2c2f18aecc41bbe10d884a110f63283e7b2",
+          "fileType": "dmg",
+          "extractArgs": null,
+          "infHint": null,
+          "driverName": null,
+          "lastChecked": "2026-11-05",
+          "status": "ok",
+          "notes": "trovato senza AI: link diretto a un file sulla pagina ufficiale (senza AI) | firma: Developer ID Installer: Ricoh Co., Ltd. (5KACUT3YX8)"
+        }
+      ]
     },
     {
       "id": "xerox",
